@@ -158,66 +158,73 @@ export default function Profile() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/20">
-      <div className="absolute top-4 right-4">
+    <div className="min-h-screen bg-gradient-subtle relative overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 right-1/4 w-80 h-80 bg-primary/5 rounded-full blur-3xl animate-float"></div>
+        <div className="absolute bottom-1/3 left-1/4 w-64 h-64 bg-primary-glow/5 rounded-full blur-3xl animate-float" style={{ animationDelay: '3s' }}></div>
+      </div>
+      
+      <div className="absolute top-4 right-4 z-10">
         <ThemeToggle />
       </div>
       
-      <div className="container max-w-2xl mx-auto px-4 py-8">
-        <div className="text-center mb-8">
-          <Avatar className="w-32 h-32 mx-auto mb-6 ring-4 ring-primary/20">
+      <div className="container max-w-2xl mx-auto px-4 py-12 relative z-10">
+        <div className="text-center mb-12 animate-slide-up">
+          <Avatar className="w-40 h-40 mx-auto mb-8 ring-4 ring-primary/30 shadow-glow hover:scale-105 transition-transform duration-300">
             <AvatarImage src={profile.avatar_url || ''} />
-            <AvatarFallback className="text-4xl bg-gradient-to-br from-primary to-primary-glow text-primary-foreground">
+            <AvatarFallback className="text-5xl bg-gradient-primary text-primary-foreground">
               {profile.display_name?.[0]?.toUpperCase() || profile.username[0]?.toUpperCase()}
             </AvatarFallback>
           </Avatar>
           
-          <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 gradient-text leading-tight">
             {profile.display_name || profile.username}
           </h1>
           
-          <p className="text-muted-foreground mb-1">@{profile.username}</p>
+          <p className="text-muted-foreground mb-2 text-lg">@{profile.username}</p>
           
           {profile.bio && (
-            <p className="text-lg text-foreground/80 max-w-md mx-auto mt-4">
+            <p className="text-xl text-foreground/90 max-w-lg mx-auto mt-6 leading-relaxed">
               {profile.bio}
             </p>
           )}
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-6 animate-slide-up" style={{ animationDelay: '0.2s' }}>
           {socialLinks.length === 0 ? (
-            <Card className="p-8 text-center bg-card/50 backdrop-blur-sm border-0">
+            <Card className="glass border-0 p-10 text-center">
               <CardContent className="pt-0">
-                <LinkIcon className="w-12 h-12 mx-auto mb-4 text-muted-foreground opacity-50" />
-                <p className="text-muted-foreground">No links to display</p>
+                <LinkIcon className="w-16 h-16 mx-auto mb-6 text-muted-foreground opacity-40" />
+                <p className="text-muted-foreground text-lg">No links to display</p>
               </CardContent>
             </Card>
           ) : (
             socialLinks.map((link, index) => (
               <Card 
                 key={link.id} 
-                className="overflow-hidden bg-card/80 backdrop-blur-sm border-0 hover:bg-card/90 transition-all duration-300 hover:shadow-lg hover:shadow-primary/10 group cursor-pointer transform hover:-translate-y-1"
+                className="glass border-0 card-elevated group cursor-pointer transform hover:scale-[1.02] transition-all duration-300 hover:shadow-glow"
                 onClick={() => handleLinkClick(link.url, link.title)}
+                style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-primary/10 to-primary/5 rounded-full flex items-center justify-center group-hover:from-primary/20 group-hover:to-primary/10 transition-colors">
-                      <span className="text-2xl">
+                <CardContent className="p-8">
+                  <div className="flex items-center gap-6">
+                    <div className="w-16 h-16 bg-gradient-primary rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:shadow-glow transition-all duration-300">
+                      <span className="text-3xl">
                         {ICON_OPTIONS.find(option => option.value === link.icon)?.icon || '🔗'}
                       </span>
                     </div>
                     
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">
+                      <h3 className="font-bold text-xl group-hover:text-primary transition-colors duration-300 mb-2">
                         {link.title}
                       </h3>
-                      <p className="text-muted-foreground text-sm truncate">
+                      <p className="text-muted-foreground text-base truncate">
                         {link.url.replace(/^https?:\/\//, '')}
                       </p>
                     </div>
                     
-                    <ExternalLink className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors opacity-0 group-hover:opacity-100" />
+                    <ExternalLink className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-all duration-300 opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0" />
                   </div>
                 </CardContent>
               </Card>
@@ -225,12 +232,12 @@ export default function Profile() {
           )}
         </div>
 
-        <footer className="text-center mt-12 pt-8 border-t border-border/50">
-          <p className="text-sm text-muted-foreground">
+        <footer className="text-center mt-16 pt-10 border-t border-border/30 glass">
+          <p className="text-base text-muted-foreground">
             Powered by{' '}
             <a 
               href="/" 
-              className="text-primary hover:text-primary-glow transition-colors font-medium"
+              className="link-hover text-primary font-semibold"
             >
               LinkHub
             </a>

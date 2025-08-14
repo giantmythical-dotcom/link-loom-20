@@ -100,37 +100,43 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/20 flex items-center justify-center p-4">
-      <div className="absolute top-4 right-4">
+    <div className="min-h-screen bg-gradient-subtle flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/3 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl animate-float"></div>
+        <div className="absolute bottom-1/4 right-1/3 w-80 h-80 bg-primary-glow/5 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }}></div>
+      </div>
+      
+      <div className="absolute top-4 right-4 z-10">
         <ThemeToggle />
       </div>
       
-      <Card className="w-full max-w-md shadow-xl border-0 bg-card/95 backdrop-blur-sm">
-        <CardHeader className="text-center space-y-4">
+      <Card className="w-full max-w-lg glass border-0 card-elevated animate-zoom-in relative z-10">
+        <CardHeader className="text-center space-y-6 pb-8">
           <div className="flex justify-center">
-            <div className="w-12 h-12 bg-gradient-to-r from-primary to-primary-glow rounded-full flex items-center justify-center">
-              <LinkIcon className="w-6 h-6 text-primary-foreground" />
+            <div className="w-16 h-16 bg-gradient-primary rounded-2xl flex items-center justify-center shadow-glow animate-pulse-glow">
+              <LinkIcon className="w-8 h-8 text-primary-foreground" />
             </div>
           </div>
-          <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
+          <CardTitle className="text-3xl font-bold gradient-text">
             LinkHub
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-lg leading-relaxed">
             Create your personalized link hub and share your online presence
           </CardDescription>
         </CardHeader>
         
-        <CardContent>
+        <CardContent className="px-8 pb-8">
           <Tabs defaultValue="signin" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="signin">Sign In</TabsTrigger>
-              <TabsTrigger value="signup">Sign Up</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-2 mb-8">
+              <TabsTrigger value="signin" className="text-base py-3">Sign In</TabsTrigger>
+              <TabsTrigger value="signup" className="text-base py-3">Sign Up</TabsTrigger>
             </TabsList>
             
-            <TabsContent value="signin">
-              <form onSubmit={handleSignIn} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="signin-email">Email</Label>
+            <TabsContent value="signin" className="space-y-6">
+              <form onSubmit={handleSignIn} className="space-y-6">
+                <div className="space-y-3">
+                  <Label htmlFor="signin-email" className="text-base font-medium">Email</Label>
                   <Input
                     id="signin-email"
                     type="email"
@@ -138,10 +144,11 @@ export default function Auth() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
+                    className="h-12 text-base"
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signin-password">Password</Label>
+                <div className="space-y-3">
+                  <Label htmlFor="signin-password" className="text-base font-medium">Password</Label>
                   <div className="relative">
                     <Input
                       id="signin-password"
@@ -150,25 +157,26 @@ export default function Auth() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
+                      className="h-12 text-base pr-12"
                     />
                     <Button
                       type="button"
                       variant="ghost"
                       size="icon"
-                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                      className="absolute right-0 top-0 h-12 w-12 hover:bg-transparent"
                       onClick={() => setShowPassword(!showPassword)}
                     >
                       {showPassword ? (
-                        <EyeOff className="h-4 w-4" />
+                        <EyeOff className="h-5 w-5" />
                       ) : (
-                        <Eye className="h-4 w-4" />
+                        <Eye className="h-5 w-5" />
                       )}
                     </Button>
                   </div>
                 </div>
                 <Button 
                   type="submit" 
-                  className="w-full" 
+                  className="w-full h-12 text-base btn-glow" 
                   variant="gradient"
                   disabled={loading}
                 >
@@ -177,10 +185,10 @@ export default function Auth() {
               </form>
             </TabsContent>
             
-            <TabsContent value="signup">
-              <form onSubmit={handleSignUp} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="signup-email">Email</Label>
+            <TabsContent value="signup" className="space-y-6">
+              <form onSubmit={handleSignUp} className="space-y-6">
+                <div className="space-y-3">
+                  <Label htmlFor="signup-email" className="text-base font-medium">Email</Label>
                   <Input
                     id="signup-email"
                     type="email"
@@ -188,10 +196,11 @@ export default function Auth() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
+                    className="h-12 text-base"
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signup-password">Password</Label>
+                <div className="space-y-3">
+                  <Label htmlFor="signup-password" className="text-base font-medium">Password</Label>
                   <div className="relative">
                     <Input
                       id="signup-password"
@@ -201,25 +210,26 @@ export default function Auth() {
                       onChange={(e) => setPassword(e.target.value)}
                       required
                       minLength={6}
+                      className="h-12 text-base pr-12"
                     />
                     <Button
                       type="button"
                       variant="ghost"
                       size="icon"
-                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                      className="absolute right-0 top-0 h-12 w-12 hover:bg-transparent"
                       onClick={() => setShowPassword(!showPassword)}
                     >
                       {showPassword ? (
-                        <EyeOff className="h-4 w-4" />
+                        <EyeOff className="h-5 w-5" />
                       ) : (
-                        <Eye className="h-4 w-4" />
+                        <Eye className="h-5 w-5" />
                       )}
                     </Button>
                   </div>
                 </div>
                 <Button 
                   type="submit" 
-                  className="w-full" 
+                  className="w-full h-12 text-base btn-glow" 
                   variant="gradient"
                   disabled={loading}
                 >

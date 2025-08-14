@@ -235,55 +235,63 @@ export default function Dashboard() {
 
   if (!profile) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/20 p-4">
-        <div className="max-w-2xl mx-auto">
-          <div className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
+      <div className="min-h-screen bg-gradient-subtle p-4 relative overflow-hidden">
+        {/* Animated background elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/3 rounded-full blur-3xl animate-float"></div>
+          <div className="absolute bottom-1/3 right-1/4 w-80 h-80 bg-primary-glow/3 rounded-full blur-3xl animate-float" style={{ animationDelay: '3s' }}></div>
+        </div>
+        
+        <div className="max-w-2xl mx-auto relative z-10">
+          <div className="flex justify-between items-center mb-10">
+            <h1 className="text-4xl font-bold gradient-text">
               Create Your Profile
             </h1>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <ThemeToggle />
-              <Button variant="outline" onClick={handleSignOut}>
+              <Button variant="outline" onClick={handleSignOut} className="glass">
                 <LogOut className="w-4 h-4 mr-2" />
                 Sign Out
               </Button>
             </div>
           </div>
 
-          <Card className="shadow-xl border-0 bg-card/95 backdrop-blur-sm">
-            <CardHeader>
-              <CardTitle>Welcome to LinkHub!</CardTitle>
-              <CardDescription>
+          <Card className="glass border-0 card-elevated animate-slide-up">
+            <CardHeader className="pb-6">
+              <CardTitle className="text-2xl">Welcome to LinkHub!</CardTitle>
+              <CardDescription className="text-lg leading-relaxed">
                 Let's set up your profile to get started. Choose a unique username that will be part of your public profile URL.
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <form onSubmit={handleCreateProfile} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="username">Username</Label>
+            <CardContent className="pb-8">
+              <form onSubmit={handleCreateProfile} className="space-y-6">
+                <div className="space-y-3">
+                  <Label htmlFor="username" className="text-base font-medium">Username</Label>
                   <Input
                     id="username"
                     placeholder="your-username"
                     value={username}
                     onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
                     required
+                    className="h-12 text-base"
                   />
                   <p className="text-sm text-muted-foreground">
-                    Your profile will be available at: {window.location.origin}/{username}
+                    Your profile will be available at: <span className="font-medium text-primary">{window.location.origin}/{username}</span>
                   </p>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="display-name">Display Name (optional)</Label>
+                <div className="space-y-3">
+                  <Label htmlFor="display-name" className="text-base font-medium">Display Name (optional)</Label>
                   <Input
                     id="display-name"
                     placeholder="Your Display Name"
                     value={displayName}
                     onChange={(e) => setDisplayName(e.target.value)}
+                    className="h-12 text-base"
                   />
                 </div>
                 <Button 
                   type="submit" 
-                  className="w-full" 
+                  className="w-full h-12 text-base btn-glow" 
                   variant="gradient"
                   disabled={isCreatingProfile}
                 >
@@ -298,36 +306,43 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/20 p-4">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-gradient-subtle p-4 relative overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-primary/3 rounded-full blur-3xl animate-float"></div>
+        <div className="absolute bottom-1/3 left-1/4 w-80 h-80 bg-primary-glow/3 rounded-full blur-3xl animate-float" style={{ animationDelay: '3s' }}></div>
+      </div>
+      
+      <div className="max-w-6xl mx-auto relative z-10">
         {/* Header */}
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
+        <div className="flex justify-between items-center mb-10 animate-slide-up">
+          <h1 className="text-4xl font-bold gradient-text">
             Dashboard
           </h1>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <Button
               variant="outline"
               onClick={() => navigate(`/${profile.username}`)}
+              className="glass hover:shadow-elegant transition-all duration-300"
             >
               <Eye className="w-4 h-4 mr-2" />
               View Profile
             </Button>
             <ThemeToggle />
-            <Button variant="outline" onClick={handleSignOut}>
+            <Button variant="outline" onClick={handleSignOut} className="glass">
               <LogOut className="w-4 h-4 mr-2" />
               Sign Out
             </Button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
           {/* Profile Section */}
-          <div className="lg:col-span-1">
-            <Card className="shadow-xl border-0 bg-card/95 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <User className="w-5 h-5" />
+          <div className="xl:col-span-1">
+            <Card className="glass border-0 card-elevated animate-slide-up">
+              <CardHeader className="pb-6">
+                <CardTitle className="flex items-center gap-3 text-xl">
+                  <User className="w-6 h-6" />
                   Profile
                 </CardTitle>
               </CardHeader>
