@@ -566,30 +566,31 @@ export default function Dashboard() {
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    {socialLinks.map((link) => (
+                    {socialLinks.map((link, index) => (
                       <div
                         key={link.id}
-                        className="flex items-center gap-3 p-3 rounded-lg border bg-secondary/5 hover:bg-secondary/10 transition-colors"
+                        className="flex items-center gap-3 p-4 rounded-lg border bg-secondary/5 hover:bg-secondary/10 hover:shadow-md transition-all duration-300 group animate-slide-up"
+                        style={{ animationDelay: `${index * 0.1}s` }}
                       >
-                        <div className="cursor-grab hover:cursor-grabbing">
+                        <div className="cursor-grab hover:cursor-grabbing opacity-50 group-hover:opacity-100 transition-opacity">
                           <GripVertical className="w-4 h-4 text-muted-foreground" />
                         </div>
-                        
-                        <div className="text-xl">
+
+                        <div className="text-xl group-hover:scale-110 transition-transform duration-300">
                           {ICON_OPTIONS.find(option => option.value === link.icon)?.icon || '🔗'}
                         </div>
-                        
+
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
-                            <h4 className="font-medium truncate">{link.title}</h4>
+                            <h4 className="font-medium truncate group-hover:text-primary transition-colors">{link.title}</h4>
                             {!link.is_active && (
-                              <Badge variant="secondary" className="text-xs">Hidden</Badge>
+                              <Badge variant="secondary" className="text-xs animate-pulse">Hidden</Badge>
                             )}
                           </div>
                           <p className="text-sm text-muted-foreground truncate">{link.url}</p>
                         </div>
-                        
-                        <div className="flex items-center gap-2">
+
+                        <div className="flex items-center gap-2 opacity-70 group-hover:opacity-100 transition-opacity">
                           <Switch
                             checked={link.is_active}
                             onCheckedChange={(checked) => handleToggleLink(link.id, checked)}
@@ -598,6 +599,7 @@ export default function Dashboard() {
                             variant="ghost"
                             size="icon"
                             onClick={() => window.open(link.url, '_blank')}
+                            className="hover:scale-110 transition-transform duration-300"
                           >
                             <ExternalLink className="w-4 h-4" />
                           </Button>
@@ -605,7 +607,7 @@ export default function Dashboard() {
                             variant="ghost"
                             size="icon"
                             onClick={() => handleDeleteLink(link.id)}
-                            className="text-destructive hover:text-destructive"
+                            className="text-destructive hover:text-destructive hover:scale-110 transition-all duration-300"
                           >
                             <Trash2 className="w-4 h-4" />
                           </Button>
