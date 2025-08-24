@@ -12,7 +12,7 @@ import { ExternalLink, Link as LinkIcon, Share2, Heart, Copy } from 'lucide-reac
 
 const ICON_OPTIONS = [
   { value: 'link', label: 'Link', icon: '🔗' },
-  { value: 'github', label: 'GitHub', icon: '���' },
+  { value: 'github', label: 'GitHub', icon: '💻' },
   { value: 'linkedin', label: 'LinkedIn', icon: '💼' },
   { value: 'twitter', label: 'Twitter/X', icon: '🐦' },
   { value: 'instagram', label: 'Instagram', icon: '📷' },
@@ -47,9 +47,9 @@ export default function Profile() {
         console.log('Current auth session:', session ? 'authenticated' : 'anonymous');
         console.log('Fetching profile for username:', username);
 
-        // Fetch profile
+        // Fetch profile - use public view for better security
         const { data: profileData, error: profileError } = await supabase
-          .from('profiles')
+          .from('public_profiles')
           .select('*')
           .eq('username', username.toLowerCase())
           .maybeSingle();
