@@ -35,15 +35,19 @@ export function useLinkRedirect(username: string, linkIdentifier: string) {
         if (docError && docError.code !== 'PGRST116') throw docError;
 
         if (document) {
+          console.log('Found document:', document);
           // Redirect to the actual PDF file
           const { data: urlData } = supabase.storage
             .from('documents')
             .getPublicUrl(document.file_path);
           
+          console.log('Document URL:', urlData.publicUrl);
           setRedirectUrl(urlData.publicUrl);
+          
+          // Delay redirect to see console logs
           setTimeout(() => {
             window.location.href = urlData.publicUrl;
-          }, 100);
+          }, 2000);
           return;
         }
 
