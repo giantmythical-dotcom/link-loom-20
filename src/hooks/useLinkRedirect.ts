@@ -86,7 +86,7 @@ export function useLinkRedirect(username: string, linkIdentifier: string) {
           
           // Delay redirect to see console logs
           setTimeout(() => {
-            window.open(urlData.publicUrl, '_blank', 'noopener,noreferrer');
+            window.location.href = urlData.publicUrl;
           }, 1000);
           return;
         }
@@ -128,7 +128,7 @@ export function useLinkRedirect(username: string, linkIdentifier: string) {
         
         // Perform the redirect after a short delay to allow for any analytics tracking
         setTimeout(() => {
-          window.open(matchingLink.url, '_blank', 'noopener,noreferrer');
+          window.location.href = matchingLink.url;
         }, 100);
 
       } catch (error) {
