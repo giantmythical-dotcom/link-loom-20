@@ -857,21 +857,20 @@ export default function Dashboard() {
                 </div>
 
                 {/* Link Performance Chart */}
-                {socialLinks.length > 0 && (
+                {!analyticsLoading && analytics.linkPerformance.length > 0 && (
                   <Card className="card-modern">
                     <CardHeader>
                       <CardTitle>Link Performance</CardTitle>
                       <CardDescription>
-                        Click performance for your top links
+                        Click performance for your links
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-4">
-                        {socialLinks.slice(0, 5).map((link, index) => {
-                          const clicks = Math.floor(Math.random() * 300) + 50;
-                          const maxClicks = 350;
-                          const percentage = (clicks / maxClicks) * 100;
-                          
+                        {analytics.linkPerformance.slice(0, 5).map((link) => {
+                          const maxClicks = Math.max(...analytics.linkPerformance.map(l => l.clicks)) || 1;
+                          const percentage = maxClicks > 0 ? (link.clicks / maxClicks) * 100 : 0;
+
                           return (
                             <div key={link.id} className="space-y-2">
                               <div className="flex items-center justify-between">
@@ -887,12 +886,12 @@ export default function Dashboard() {
                                   </div>
                                 </div>
                                 <div className="text-right">
-                                  <p className="font-bold">{clicks}</p>
+                                  <p className="font-bold">{link.clicks}</p>
                                   <p className="text-xs text-muted-foreground">clicks</p>
                                 </div>
                               </div>
                               <div className="w-full bg-secondary rounded-full h-2">
-                                <div 
+                                <div
                                   className="bg-gradient-accent h-2 rounded-full transition-all duration-1000 ease-out"
                                   style={{ width: `${percentage}%` }}
                                 ></div>
@@ -901,6 +900,16 @@ export default function Dashboard() {
                           );
                         })}
                       </div>
+                    </CardContent>
+                  </Card>
+                )}
+
+                {!analyticsLoading && analytics.linkPerformance.length === 0 && (
+                  <Card className="card-modern">
+                    <CardContent className="p-12 text-center">
+                      <BarChart3 className="w-16 h-16 mx-auto mb-4 text-muted-foreground/50" />
+                      <h3 className="text-lg font-medium text-foreground mb-2">No analytics data yet</h3>
+                      <p className="text-muted-foreground">Your link performance will appear here once people start clicking your links.</p>
                     </CardContent>
                   </Card>
                 )}
