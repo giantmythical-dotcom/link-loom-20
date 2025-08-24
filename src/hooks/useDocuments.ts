@@ -12,6 +12,9 @@ export interface Document {
   file_size: number;
   mime_type: string;
   is_active: boolean;
+  custom_title?: string;
+  custom_icon: string;
+  is_public: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -130,6 +133,31 @@ export const useDocuments = () => {
     }
   };
 
+  const updateDocument = async (id: string, updates: Partial<Pick<Document, 'custom_title' | 'custom_icon' | 'is_public'>>) => {
+    try {
+      const { error } = await supabase
+        .from('documents')
+        .update(updates)
+        .eq('id', id);
+
+      if (error) throw error;
+
+      await fetchDocuments();
+      
+      toast({
+        title: "Success",
+        description: "Document updated successfully",
+      });
+    } catch (error) {
+      console.error('Error updating document:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update document",
+        variant: "destructive",
+      });
+    }
+  };
+
   const getDocumentUrl = (document: Document) => {
     const { data } = supabase.storage
       .from('documents')
@@ -151,6 +179,7 @@ export const useDocuments = () => {
     loading,
     uploadDocument,
     deleteDocument,
+    updateDocument,
     getDocumentUrl,
     refetch: fetchDocuments,
   };

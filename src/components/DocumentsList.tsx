@@ -2,16 +2,35 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { FileText, Copy, ExternalLink, Trash2, Check } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { FileText, Copy, ExternalLink, Trash2, Check, Edit, GripVertical, FileIcon, Download, Share, Eye, EyeOff } from 'lucide-react';
 import { useDocuments, type Document } from '@/hooks/useDocuments';
 import { useToast } from '@/hooks/use-toast';
 import { useProfile } from '@/hooks/useProfile';
 
+const DOCUMENT_ICON_OPTIONS = [
+  { value: 'file-text', icon: '📄', label: 'Document' },
+  { value: 'file', icon: '📋', label: 'File' },
+  { value: 'download', icon: '💾', label: 'Download' },
+  { value: 'share', icon: '🔗', label: 'Share' },
+  { value: 'book', icon: '📖', label: 'Book' },
+  { value: 'clipboard', icon: '📊', label: 'Report' },
+  { value: 'folder', icon: '📁', label: 'Folder' },
+  { value: 'archive', icon: '📦', label: 'Archive' },
+];
+
 export const DocumentsList = () => {
-  const { documents, loading, deleteDocument, getDocumentUrl } = useDocuments();
+  const { documents, loading, deleteDocument, updateDocument, getDocumentUrl } = useDocuments();
   const { profile } = useProfile();
   const { toast } = useToast();
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [editingDocument, setEditingDocument] = useState<Document | null>(null);
+  const [customTitle, setCustomTitle] = useState('');
+  const [customIcon, setCustomIcon] = useState('file-text');
 
   const formatFileSize = (bytes: number) => {
     if (bytes === 0) return '0 Bytes';
@@ -50,6 +69,41 @@ export const DocumentsList = () => {
     window.open(url, '_blank');
   };
 
+  const handleEditDocument = (document: Document) => {
+    setEditingDocument(document);
+    setCustomTitle(document.custom_title || '');
+    setCustomIcon(document.custom_icon || 'file-text');
+  };
+
+  const handleUpdateDocument = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingDocument) return;
+
+    await updateDocument(editingDocument.id, {
+      custom_title: customTitle.trim() || null,
+      custom_icon: customIcon,
+    });
+
+    setEditingDocument(null);
+    setCustomTitle('');
+    setCustomIcon('file-text');
+  };
+
+  const handleToggleVisibility = async (document: Document) => {
+    await updateDocument(document.id, {
+      is_public: !document.is_public,
+    });
+  };
+
+  const getDisplayTitle = (document: Document) => {
+    return document.custom_title || document.title;
+  };
+
+  const getDocumentIcon = (document: Document) => {
+    const iconOption = DOCUMENT_ICON_OPTIONS.find(option => option.value === document.custom_icon);
+    return iconOption?.icon || '📄';
+  };
+
   if (loading) {
     return (
       <Card className="glass">
@@ -77,88 +131,158 @@ export const DocumentsList = () => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <FileText className="w-5 h-5" />
-          Your Documents
+          Document Links
         </CardTitle>
         <CardDescription>
-          Manage your uploaded PDF documents and their shareable links
+          Manage your uploaded documents and customize their shareable links
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {documents.map((document) => (
           <div
             key={document.id}
-            className="p-4 border rounded-lg bg-card/50 card-elevated space-y-3"
+            className="flex items-center gap-3 p-3 rounded-lg border bg-secondary/5 hover:bg-secondary/10 transition-colors"
           >
-            <div className="flex items-start justify-between">
-              <div className="flex-1 min-w-0">
-                <h3 className="font-medium truncate">{document.title}</h3>
-                <div className="flex items-center gap-2 mt-1">
+            <div className="cursor-grab hover:cursor-grabbing">
+              <GripVertical className="w-4 h-4 text-muted-foreground" />
+            </div>
+            
+            <div className="text-xl">
+              {getDocumentIcon(document)}
+            </div>
+            
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <h4 className="font-medium truncate">{getDisplayTitle(document)}</h4>
+                <div className="flex items-center gap-1">
+                  {!document.is_public && (
+                    <Badge variant="secondary" className="text-xs">
+                      <EyeOff className="w-3 h-3 mr-1" />
+                      Private
+                    </Badge>
+                  )}
                   <Badge variant="secondary" className="text-xs">
-                    PDF
-                  </Badge>
-                  <span className="text-xs text-muted-foreground">
                     {formatFileSize(document.file_size)}
-                  </span>
-                  <span className="text-xs text-muted-foreground">
-                    {new Date(document.created_at).toLocaleDateString()}
-                  </span>
+                  </Badge>
                 </div>
               </div>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <span className="truncate">{document.filename}</span>
+                <span>•</span>
+                <span>{new Date(document.created_at).toLocaleDateString()}</span>
+              </div>
+              {profile?.username && (
+                <div className="text-xs text-muted-foreground mt-1">
+                  {getShareableLink(document)}
+                </div>
+              )}
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <Switch
+                checked={document.is_public}
+                onCheckedChange={() => handleToggleVisibility(document)}
+                title={document.is_public ? "Make private" : "Make public"}
+              />
+              
               <Button
                 variant="ghost"
-                size="sm"
+                size="icon"
+                onClick={() => handleEditDocument(document)}
+                title="Customize link"
+              >
+                <Edit className="w-4 h-4" />
+              </Button>
+              
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => openDocument(document)}
+                title="View document"
+              >
+                <ExternalLink className="w-4 h-4" />
+              </Button>
+              
+              {profile?.username && document.is_public && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => copyLink(document)}
+                  title="Copy shareable link"
+                >
+                  {copiedId === document.id ? (
+                    <Check className="w-4 h-4 text-green-500" />
+                  ) : (
+                    <Copy className="w-4 h-4" />
+                  )}
+                </Button>
+              )}
+              
+              <Button
+                variant="ghost"
+                size="icon"
                 onClick={() => deleteDocument(document.id)}
                 className="text-destructive hover:text-destructive"
+                title="Delete document"
               >
                 <Trash2 className="w-4 h-4" />
               </Button>
             </div>
-
-            {profile?.username && (
-              <div className="space-y-2">
-                <div className="text-sm text-muted-foreground">Shareable link:</div>
-                <div className="flex items-center gap-2 p-2 bg-secondary/50 rounded text-sm break-all">
-                  <code className="flex-1">{getShareableLink(document)}</code>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => copyLink(document)}
-                    className="h-6 w-6 p-0 flex-shrink-0"
-                  >
-                    {copiedId === document.id ? (
-                      <Check className="w-3 h-3 text-green-500" />
-                    ) : (
-                      <Copy className="w-3 h-3" />
-                    )}
-                  </Button>
-                </div>
-              </div>
-            )}
-
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => openDocument(document)}
-                className="flex items-center gap-1"
-              >
-                <ExternalLink className="w-3 h-3" />
-                View PDF
-              </Button>
-              {profile?.username && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => copyLink(document)}
-                  className="flex items-center gap-1"
-                >
-                  <Copy className="w-3 h-3" />
-                  Copy Link
-                </Button>
-              )}
-            </div>
           </div>
         ))}
+
+        <Dialog open={!!editingDocument} onOpenChange={(open) => !open && setEditingDocument(null)}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Customize Document Link</DialogTitle>
+              <DialogDescription>
+                Customize how this document appears in your profile
+              </DialogDescription>
+            </DialogHeader>
+            <form onSubmit={handleUpdateDocument} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="custom-title">Display Title</Label>
+                <Input
+                  id="custom-title"
+                  value={customTitle}
+                  onChange={(e) => setCustomTitle(e.target.value)}
+                  placeholder={editingDocument?.title || "Enter custom title"}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Leave empty to use the original title
+                </p>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="custom-icon">Icon</Label>
+                <Select value={customIcon} onValueChange={setCustomIcon}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {DOCUMENT_ICON_OPTIONS.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        <div className="flex items-center gap-2">
+                          <span>{option.icon}</span>
+                          <span>{option.label}</span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="flex justify-end gap-2">
+                <Button type="button" variant="outline" onClick={() => setEditingDocument(null)}>
+                  Cancel
+                </Button>
+                <Button type="submit" variant="gradient">
+                  Save Changes
+                </Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
       </CardContent>
     </Card>
   );
