@@ -62,8 +62,27 @@ export default function Profile() {
 
         console.log('👀 Public profiles view result:', { profileData, profileError });
 
-        if (profileError) {
-          console.error('Error fetching profile:', profileError);
+        // If public_profiles view fails, fall back to regular profiles table
+        let finalProfileData = profileData;
+        let finalError = profileError;
+
+        if (profileError && !profileData) {
+          console.log('📋 Public profiles view failed, trying regular profiles table...');
+
+          // Fallback to regular profiles table
+          const { data: fallbackData, error: fallbackError } = await supabase
+            .from('profiles')
+            .select('id, user_id, username, display_name, bio, avatar_url, created_at, updated_at')
+            .eq('username', username.toLowerCase())
+            .maybeSingle();
+
+          console.log('🔄 Fallback profiles result:', { fallbackData, fallbackError });
+          finalProfileData = fallbackData;
+          finalError = fallbackError;
+        }
+
+        if (finalError) {
+          console.error('Error fetching profile:', finalError);
           setNotFound(true);
           setLoading(false);
           return;
