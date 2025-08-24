@@ -58,6 +58,7 @@ export default function Dashboard() {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const { profile, socialLinks, loading, createProfile, updateProfile, addSocialLink, updateSocialLink, deleteSocialLink, uploadAvatar } = useProfile();
+  const { analytics, loading: analyticsLoading, error: analyticsError } = useAnalytics();
   
   const [isCreatingProfile, setIsCreatingProfile] = useState(false);
   const [username, setUsername] = useState('');
