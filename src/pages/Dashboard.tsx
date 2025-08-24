@@ -566,17 +566,18 @@ export default function Dashboard() {
                 )}
               </CardContent>
             </Card>
+          </div>
+        </div>
 
-            {/* Documents Section */}
-            <div className="mt-8 space-y-6 animate-slide-up">
-              <h2 className="text-2xl font-bold gradient-text">Documents</h2>
-              <div className="space-y-6">
-                <DocumentUpload />
-                <DocumentsList />
-              </div>
-            </div>
+        {/* Documents Section */}
+        <div className="mt-8 space-y-6 animate-slide-up">
+          <h2 className="text-2xl font-bold gradient-text">Documents</h2>
+          <div className="space-y-6">
+            <DocumentUpload />
+            <DocumentsList />
           </div>
         </div>
       </div>
-    );
+    </div>
+  );
 }
