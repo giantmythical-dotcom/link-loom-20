@@ -17,11 +17,14 @@ export type Database = {
       documents: {
         Row: {
           created_at: string
+          custom_icon: string | null
+          custom_title: string | null
           file_path: string
           file_size: number
           filename: string
           id: string
           is_active: boolean
+          is_public: boolean | null
           mime_type: string
           title: string
           updated_at: string
@@ -29,11 +32,14 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          custom_icon?: string | null
+          custom_title?: string | null
           file_path: string
           file_size: number
           filename: string
           id?: string
           is_active?: boolean
+          is_public?: boolean | null
           mime_type?: string
           title: string
           updated_at?: string
@@ -41,11 +47,14 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          custom_icon?: string | null
+          custom_title?: string | null
           file_path?: string
           file_size?: number
           filename?: string
           id?: string
           is_active?: boolean
+          is_public?: boolean | null
           mime_type?: string
           title?: string
           updated_at?: string
