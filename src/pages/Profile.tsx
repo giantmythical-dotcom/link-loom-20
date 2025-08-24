@@ -64,6 +64,21 @@ export default function Profile() {
 
         setProfile(profileData);
 
+        // Track profile view (only if the table exists)
+        try {
+          await supabase
+            .from('profile_views')
+            .insert({
+              profile_id: profileData.id,
+              viewed_at: new Date().toISOString(),
+              user_agent: navigator.userAgent,
+              referrer: document.referrer || null
+            });
+        } catch (error) {
+          // Silently fail if profile_views table doesn't exist yet
+          console.log('Profile view tracking not available yet:', error);
+        }
+
         // Fetch social links
         const { data: linksData, error: linksError } = await supabase
           .from('social_links')
