@@ -16,6 +16,8 @@ export function useLinkRedirect(username: string, linkIdentifier: string) {
 
       try {
         // First check if it's a document ID
+        console.log('Checking for document with ID:', linkIdentifier, 'for user:', username);
+        
         const { data: document, error: docError } = await supabase
           .from('documents')
           .select(`
@@ -24,8 +26,11 @@ export function useLinkRedirect(username: string, linkIdentifier: string) {
           `)
           .eq('id', linkIdentifier)
           .eq('is_active', true)
+          .eq('is_public', true)
           .eq('profiles.username', username)
           .maybeSingle();
+          
+        console.log('Document query result:', { document, docError });
 
         if (docError && docError.code !== 'PGRST116') throw docError;
 
