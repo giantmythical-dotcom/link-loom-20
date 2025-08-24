@@ -379,4 +379,27 @@ All colors MUST be HSL.
   .dragging {
     user-select: none;
   }
+
+  /* Ripple effect for profile links */
+  .group-active\:scale-100:active {
+    transform: scale(1);
+  }
+
+  /* Enhanced mobile responsive animations */
+  @media (max-width: 768px) {
+    .animate-slide-up {
+      animation: slide-up-mobile 0.8s ease-out;
+    }
+  }
+
+  @keyframes slide-up-mobile {
+    from {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 }
