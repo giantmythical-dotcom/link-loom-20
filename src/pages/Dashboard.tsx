@@ -635,10 +635,23 @@ export default function Dashboard() {
                     {socialLinks.map((link, index) => (
                       <div
                         key={link.id}
-                        className="flex items-center gap-3 p-4 rounded-lg border bg-secondary/5 hover:bg-secondary/10 hover:shadow-md transition-all duration-300 group animate-slide-up"
+                        draggable
+                        onDragStart={(e) => handleDragStart(e, link.id)}
+                        onDragOver={(e) => handleDragOver(e, link.id)}
+                        onDragLeave={handleDragLeave}
+                        onDrop={(e) => handleDrop(e, link.id)}
+                        onDragEnd={handleDragEnd}
+                        className={`flex items-center gap-3 p-4 rounded-lg border bg-secondary/5 hover:bg-secondary/10 hover:shadow-md transition-all duration-300 group animate-slide-up ${
+                          draggedItem === link.id ? 'opacity-50 scale-95 rotate-2' : ''
+                        } ${
+                          dragOverItem === link.id ? 'border-primary bg-primary/5 scale-102' : ''
+                        }`}
                         style={{ animationDelay: `${index * 0.1}s` }}
                       >
-                        <div className="cursor-grab hover:cursor-grabbing opacity-50 group-hover:opacity-100 transition-opacity">
+                        <div
+                          className="cursor-grab hover:cursor-grabbing opacity-50 group-hover:opacity-100 transition-opacity"
+                          onMouseDown={(e) => e.preventDefault()}
+                        >
                           <GripVertical className="w-4 h-4 text-muted-foreground" />
                         </div>
 
