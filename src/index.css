@@ -189,7 +189,7 @@ All colors MUST be HSL.
     --sidebar-foreground: 213 31% 91%;
     --sidebar-primary: 217 91% 60%;
     --sidebar-primary-foreground: 222 84% 5%;
-    --sidebar-accent: 217 33% 17%;
+    --sidebar-accent: 217 33% 25%;
     --sidebar-accent-foreground: 213 31% 91%;
     --sidebar-border: 217 33% 25%;
     --sidebar-ring: 217 91% 60%;
@@ -227,7 +227,7 @@ All colors MUST be HSL.
     --sidebar-foreground: 140 3% 94%;
     --sidebar-primary: 142 71% 45%;
     --sidebar-primary-foreground: 140 100% 6%;
-    --sidebar-accent: 140 15% 20%;
+    --sidebar-accent: 140 15% 28%;
     --sidebar-accent-foreground: 140 3% 94%;
     --sidebar-border: 140 15% 28%;
     --sidebar-ring: 142 71% 45%;
@@ -265,7 +265,7 @@ All colors MUST be HSL.
     --sidebar-foreground: 280 5% 95%;
     --sidebar-primary: 280 100% 70%;
     --sidebar-primary-foreground: 280 100% 5%;
-    --sidebar-accent: 280 8% 17%;
+    --sidebar-accent: 280 8% 25%;
     --sidebar-accent-foreground: 280 5% 95%;
     --sidebar-border: 280 8% 25%;
     --sidebar-ring: 280 100% 70%;
@@ -303,7 +303,7 @@ All colors MUST be HSL.
     --sidebar-foreground: 30 5% 95%;
     --sidebar-primary: 25 95% 53%;
     --sidebar-primary-foreground: 30 100% 5%;
-    --sidebar-accent: 30 8% 17%;
+    --sidebar-accent: 30 8% 25%;
     --sidebar-accent-foreground: 30 5% 95%;
     --sidebar-border: 30 8% 25%;
     --sidebar-ring: 25 95% 53%;
