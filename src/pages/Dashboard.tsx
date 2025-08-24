@@ -385,15 +385,15 @@ export default function Dashboard() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex flex-col items-center space-y-4">
-                  <div className="relative">
-                    <Avatar className="w-24 h-24">
+                  <div className="relative group">
+                    <Avatar className="w-24 h-24 ring-4 ring-primary/20 group-hover:ring-primary/40 transition-all duration-300">
                       <AvatarImage src={profile.avatar_url || ''} />
-                      <AvatarFallback className="text-2xl">
+                      <AvatarFallback className="text-2xl bg-gradient-primary text-primary-foreground">
                         {profile.display_name?.[0]?.toUpperCase() || profile.username[0]?.toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
-                    <label htmlFor="avatar-upload" className="absolute -bottom-1 -right-1 cursor-pointer">
-                      <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center hover:bg-primary/90 transition-colors">
+                    <label htmlFor="avatar-upload" className="absolute -bottom-1 -right-1 cursor-pointer group">
+                      <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center hover:bg-primary/90 hover:scale-110 transition-all duration-300 shadow-lg hover:shadow-glow">
                         <Upload className="w-4 h-4" />
                       </div>
                       <input
@@ -405,15 +405,30 @@ export default function Dashboard() {
                       />
                     </label>
                   </div>
-                  
-                  <div className="text-center space-y-1">
+
+                  <div className="text-center space-y-2">
                     <h3 className="font-semibold text-lg">
                       {profile.display_name || profile.username}
                     </h3>
-                    <Badge variant="secondary">@{profile.username}</Badge>
+                    <Badge variant="secondary" className="hover:bg-secondary/80 transition-colors">
+                      @{profile.username}
+                    </Badge>
                     {profile.bio && (
-                      <p className="text-sm text-muted-foreground mt-2">{profile.bio}</p>
+                      <p className="text-sm text-muted-foreground mt-2 leading-relaxed">{profile.bio}</p>
                     )}
+                  </div>
+
+                  {/* Profile URL */}
+                  <div className="w-full">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleCopyProfileUrl}
+                      className="w-full text-xs hover:bg-primary/10 transition-all duration-300 group"
+                    >
+                      <Copy className="w-3 h-3 mr-2 group-hover:scale-110 transition-transform" />
+                      Copy Profile URL
+                    </Button>
                   </div>
                 </div>
 
