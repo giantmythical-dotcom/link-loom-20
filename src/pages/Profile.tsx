@@ -60,15 +60,15 @@ export default function Profile() {
           return;
         }
 
-        if (!finalProfileData) {
+        if (!profileData) {
           console.log('❌ No profile found for username:', username);
           setNotFound(true);
           setLoading(false);
           return;
         }
 
-        console.log('✅ Profile found:', finalProfileData);
-        setProfile(finalProfileData);
+        console.log('✅ Profile found:', profileData);
+        setProfile(profileData);
 
         // Track profile view (only for anonymous users - authenticated users are tracked elsewhere)
         // This helps avoid double-counting when profile owners view their own profile
