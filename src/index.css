@@ -455,90 +455,16 @@ All colors MUST be HSL.
 }
 
 @layer utilities {
-  /* Custom animations */
-  @keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
+  /* Modern Animation System */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
   }
 
-  @keyframes pulse-glow {
-    0%, 100% { box-shadow: 0 0 5px hsl(var(--primary) / 0.5); }
-    50% { box-shadow: 0 0 20px hsl(var(--primary) / 0.8), 0 0 30px hsl(var(--primary) / 0.6); }
-  }
-
-  @keyframes slide-up {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  @keyframes slide-in {
-    from { opacity: 0; transform: translateX(-20px); }
-    to { opacity: 1; transform: translateX(0); }
-  }
-
-  @keyframes zoom-in {
-    from { opacity: 0; transform: scale(0.9); }
-    to { opacity: 1; transform: scale(1); }
-  }
-
-  .animate-slide-up {
-    animation: slide-up 0.6s ease-out;
-  }
-
-  .animate-slide-in {
-    animation: slide-in 0.6s ease-out;
-  }
-
-  .animate-zoom-in {
-    animation: zoom-in 0.6s ease-out;
-  }
-
-  .animate-pulse-glow {
-    animation: pulse-glow 2s ease-in-out infinite;
-  }
-
-  /* Scroll-based animations */
-  .scroll-fade-in {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: all 0.8s ease-out;
-  }
-
-  .scroll-fade-in.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  /* Drag and drop effects */
-  .scale-102 {
-    transform: scale(1.02);
-  }
-
-  .rotate-2 {
-    transform: rotate(2deg);
-  }
-
-  /* Prevent text selection during drag */
-  .dragging {
-    user-select: none;
-  }
-
-  /* Ripple effect for profile links */
-  .group-active\:scale-100:active {
-    transform: scale(1);
-  }
-
-  /* Enhanced mobile responsive animations */
-  @media (max-width: 768px) {
-    .animate-slide-up {
-      animation: slide-up-mobile 0.8s ease-out;
-    }
-  }
-
-  @keyframes slide-up-mobile {
+  @keyframes slideUp {
     from {
       opacity: 0;
-      transform: translateY(40px);
+      transform: translateY(24px);
     }
     to {
       opacity: 1;
@@ -546,45 +472,148 @@ All colors MUST be HSL.
     }
   }
 
-  /* New button animations */
-  @keyframes shimmer {
-    0% { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
   }
 
-  .animate-shimmer {
-    animation: shimmer 2s ease-in-out infinite;
+  @keyframes gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
   }
 
-  @keyframes bounce-subtle {
+  @keyframes gentle-float {
     0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-2px); }
+    50% { transform: translateY(-4px); }
   }
 
-  .animate-bounce-subtle {
-    animation: bounce-subtle 2s ease-in-out infinite;
+  @keyframes subtle-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; }
   }
 
-  /* Enhanced card hover effects */
-  .card-hover-lift {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Clean Animation Classes */
+  .animate-fade-in {
+    animation: fadeIn 0.6s var(--ease-out);
   }
 
-  .card-hover-lift:hover {
-    transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.2);
+  .animate-slide-up {
+    animation: slideUp 0.6s var(--ease-out);
   }
 
-  /* Gradient borders */
-  .gradient-border {
-    position: relative;
-    background: linear-gradient(hsl(var(--background)), hsl(var(--background))) padding-box,
-                linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow))) border-box;
-    border: 2px solid transparent;
+  .animate-scale-in {
+    animation: scaleIn 0.4s var(--ease-spring);
   }
 
-  /* Smooth color transitions */
-  .color-transition {
-    transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+  .animate-float {
+    animation: gentle-float 3s ease-in-out infinite;
+  }
+
+  .animate-pulse-subtle {
+    animation: subtle-pulse 2s ease-in-out infinite;
+  }
+
+  /* Modern Interaction States */
+  .hover-lift {
+    transition: transform 0.2s var(--ease-out);
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-1px);
+  }
+
+  .hover-scale {
+    transition: transform 0.2s var(--ease-out);
+  }
+
+  .hover-scale:hover {
+    transform: scale(1.02);
+  }
+
+  .press-scale {
+    transition: transform 0.1s var(--ease-out);
+  }
+
+  .press-scale:active {
+    transform: scale(0.98);
+  }
+
+  /* Responsive Animation Control */
+  @media (prefers-reduced-motion: reduce) {
+    .animate-fade-in,
+    .animate-slide-up,
+    .animate-scale-in,
+    .animate-float,
+    .animate-pulse-subtle {
+      animation: none;
+    }
+
+    .hover-lift:hover,
+    .hover-scale:hover {
+      transform: none;
+    }
+  }
+
+  /* Clean Utility Classes */
+  .glass-modern {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .dark .glass-modern {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .gradient-mesh {
+    background:
+      radial-gradient(circle at 20% 80%, hsl(var(--accent-blue) / 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, hsl(var(--accent-emerald) / 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 40% 40%, hsl(var(--accent-orange) / 0.05) 0%, transparent 50%);
+  }
+
+  /* Modern Grid and Layout */
+  .container-modern {
+    @apply mx-auto px-4 sm:px-6 lg:px-8;
+    max-width: min(1280px, calc(100vw - 2rem));
+  }
+
+  .section-padding {
+    @apply py-16 sm:py-20 lg:py-24;
+  }
+
+  .content-width {
+    max-width: 65ch;
+  }
+
+  /* Clean Focus and Selection */
+  .focus-visible-modern {
+    @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2;
+  }
+
+  ::selection {
+    background: hsl(var(--accent-blue) / 0.2);
+    color: hsl(var(--foreground));
+  }
+
+  /* Scroll Indicators */
+  .scroll-smooth {
+    scroll-behavior: smooth;
+  }
+
+  /* Modern spacing scale */
+  .space-y-section > * + * {
+    margin-top: var(--space-24);
+  }
+
+  .space-y-content > * + * {
+    margin-top: var(--space-6);
   }
 }
