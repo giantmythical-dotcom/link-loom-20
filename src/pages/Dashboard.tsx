@@ -573,12 +573,15 @@ export default function Dashboard() {
           {/* Main Content */}
           <div className="lg:col-span-3 space-y-6">
             {/* Navigation Tabs */}
-            <div className="flex gap-1 bg-secondary/50 p-1 rounded-lg">
+            <div className="flex gap-1 bg-muted p-1 rounded-lg border">
               <Button
                 variant={activeTab === 'links' ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => setActiveTab('links')}
-                className={activeTab === 'links' ? 'bg-background shadow-sm' : ''}
+                className={activeTab === 'links'
+                  ? 'bg-background shadow-sm text-foreground font-medium'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-background/50'
+                }
               >
                 <LinkIcon className="w-4 h-4 mr-2" />
                 Links
@@ -587,7 +590,10 @@ export default function Dashboard() {
                 variant={activeTab === 'analytics' ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => setActiveTab('analytics')}
-                className={activeTab === 'analytics' ? 'bg-background shadow-sm' : ''}
+                className={activeTab === 'analytics'
+                  ? 'bg-background shadow-sm text-foreground font-medium'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-background/50'
+                }
               >
                 <BarChart3 className="w-4 h-4 mr-2" />
                 Analytics
@@ -596,7 +602,10 @@ export default function Dashboard() {
                 variant={activeTab === 'documents' ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => setActiveTab('documents')}
-                className={activeTab === 'documents' ? 'bg-background shadow-sm' : ''}
+                className={activeTab === 'documents'
+                  ? 'bg-background shadow-sm text-foreground font-medium'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-background/50'
+                }
               >
                 <FileText className="w-4 h-4 mr-2" />
                 Documents

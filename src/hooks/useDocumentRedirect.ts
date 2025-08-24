@@ -35,8 +35,8 @@ export const useDocumentRedirect = () => {
           const { data: urlData } = supabase.storage
             .from('documents')
             .getPublicUrl(document.file_path);
-          
-          window.location.href = urlData.publicUrl;
+
+          window.open(urlData.publicUrl, '_blank', 'noopener,noreferrer');
           return;
         }
 
