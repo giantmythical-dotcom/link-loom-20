@@ -839,11 +839,13 @@ export default function Dashboard() {
                     <CardContent className="p-6">
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-sm font-medium text-muted-foreground">Click Rate</p>
-                          <p className="text-3xl font-bold text-foreground">67%</p>
-                          <p className="text-xs text-accent-emerald flex items-center gap-1 mt-1">
-                            <TrendingUp className="w-3 h-3" />
-                            +3% from last week
+                          <p className="text-sm font-medium text-muted-foreground">Avg Clicks per Link</p>
+                          <p className="text-3xl font-bold text-foreground">
+                            {analyticsLoading ? '...' : analytics.clickRate.toFixed(1)}
+                          </p>
+                          <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
+                            <Zap className="w-3 h-3" />
+                            Real-time data
                           </p>
                         </div>
                         <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center">
