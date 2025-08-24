@@ -96,12 +96,6 @@ export default function Profile() {
 
         if (linksError) {
           console.error('Error fetching links:', linksError);
-          console.error('Links error details:', {
-            message: linksError.message,
-            code: linksError.code,
-            details: linksError.details,
-            hint: linksError.hint
-          });
           // Don't fail the entire profile if social links can't be fetched
           setSocialLinks([]);
         } else {
