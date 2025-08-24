@@ -822,10 +822,10 @@ export default function Dashboard() {
                         <div>
                           <p className="text-sm font-medium text-muted-foreground">Top Link</p>
                           <p className="text-lg font-bold truncate">
-                            {socialLinks.length > 0 ? socialLinks[0].title : 'No links yet'}
+                            {analyticsLoading ? '...' : (analytics.topLink?.title || 'No clicks yet')}
                           </p>
                           <p className="text-xs text-muted-foreground">
-                            {socialLinks.length > 0 ? '342 clicks' : 'Add your first link'}
+                            {analyticsLoading ? '...' : (analytics.topLink ? `${analytics.topLink.clicks} clicks` : 'Add your first link')}
                           </p>
                         </div>
                         <div className="w-12 h-12 bg-accent-orange/10 rounded-2xl flex items-center justify-center">
