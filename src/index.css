@@ -365,4 +365,18 @@ All colors MUST be HSL.
     opacity: 1;
     transform: translateY(0);
   }
+
+  /* Drag and drop effects */
+  .scale-102 {
+    transform: scale(1.02);
+  }
+
+  .rotate-2 {
+    transform: rotate(2deg);
+  }
+
+  /* Prevent text selection during drag */
+  .dragging {
+    user-select: none;
+  }
 }
