@@ -122,9 +122,59 @@ export default function Profile() {
     }
   }, [profile]);
 
-  const handleLinkClick = (url: string, title: string) => {
-    // Track click analytics here if needed
+  const handleLinkClick = async (linkId: string, url: string, title: string) => {
+    // Add visual feedback
+    setClickedLinks(prev => new Set(prev).add(linkId));
+
+    // Track click analytics in the database
+    try {
+      await supabase
+        .from('link_clicks')
+        .insert({
+          link_id: linkId,
+          clicked_at: new Date().toISOString(),
+          user_agent: navigator.userAgent,
+          referrer: document.referrer || null
+        });
+    } catch (error) {
+      console.error('Failed to track click:', error);
+    }
+
+    // Open the link
     window.open(url, '_blank', 'noopener,noreferrer');
+
+    // Remove visual feedback after animation
+    setTimeout(() => {
+      setClickedLinks(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(linkId);
+        return newSet;
+      });
+    }, 1000);
+  };
+
+  const handleShare = async () => {
+    const profileUrl = `${window.location.origin}/${profile?.username}`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `${profile?.display_name || profile?.username}'s LinkHub`,
+          text: profile?.bio || `Check out ${profile?.display_name || profile?.username}'s links`,
+          url: profileUrl,
+        });
+      } catch (error) {
+        console.error('Error sharing:', error);
+      }
+    } else {
+      // Fallback to copy to clipboard
+      try {
+        await navigator.clipboard.writeText(profileUrl);
+        // Could show a toast here if toast hook was available
+      } catch (error) {
+        console.error('Failed to copy URL:', error);
+      }
+    }
   };
 
   if (loading) {
