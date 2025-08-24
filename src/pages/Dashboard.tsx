@@ -700,6 +700,146 @@ export default function Dashboard() {
           </div>
         </div>
 
+        {/* Analytics Section */}
+        <div className="mt-8 space-y-6 animate-slide-up">
+          <h2 className="text-2xl font-bold gradient-text flex items-center gap-3">
+            <BarChart3 className="w-7 h-7" />
+            Analytics
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* Total Clicks */}
+            <Card className="glass border-0 card-elevated group hover:shadow-glow transition-all duration-500">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Total Clicks</p>
+                    <p className="text-3xl font-bold gradient-text">1,247</p>
+                    <p className="text-xs text-green-500 flex items-center gap-1 mt-1">
+                      <TrendingUp className="w-3 h-3" />
+                      +12% from last week
+                    </p>
+                  </div>
+                  <div className="w-12 h-12 bg-gradient-primary rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <BarChart3 className="w-6 h-6 text-primary-foreground" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Profile Views */}
+            <Card className="glass border-0 card-elevated group hover:shadow-glow transition-all duration-500">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Profile Views</p>
+                    <p className="text-3xl font-bold gradient-text">892</p>
+                    <p className="text-xs text-green-500 flex items-center gap-1 mt-1">
+                      <TrendingUp className="w-3 h-3" />
+                      +8% from last week
+                    </p>
+                  </div>
+                  <div className="w-12 h-12 bg-gradient-primary rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <Eye className="w-6 h-6 text-primary-foreground" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Top Link */}
+            <Card className="glass border-0 card-elevated group hover:shadow-glow transition-all duration-500">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Top Link</p>
+                    <p className="text-lg font-bold truncate">
+                      {socialLinks.length > 0 ? socialLinks[0].title : 'No links yet'}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {socialLinks.length > 0 ? '342 clicks' : 'Add your first link'}
+                    </p>
+                  </div>
+                  <div className="w-12 h-12 bg-gradient-primary rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <Star className="w-6 h-6 text-primary-foreground" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Conversion Rate */}
+            <Card className="glass border-0 card-elevated group hover:shadow-glow transition-all duration-500">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Click Rate</p>
+                    <p className="text-3xl font-bold gradient-text">67%</p>
+                    <p className="text-xs text-green-500 flex items-center gap-1 mt-1">
+                      <TrendingUp className="w-3 h-3" />
+                      +3% from last week
+                    </p>
+                  </div>
+                  <div className="w-12 h-12 bg-gradient-primary rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <Zap className="w-6 h-6 text-primary-foreground" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Link Performance */}
+          {socialLinks.length > 0 && (
+            <Card className="glass border-0 card-elevated">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3">
+                  <BarChart3 className="w-5 h-5" />
+                  Link Performance
+                </CardTitle>
+                <CardDescription>
+                  Click performance for your top links
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {socialLinks.slice(0, 5).map((link, index) => {
+                    // Mock data for demonstration
+                    const clicks = Math.floor(Math.random() * 300) + 50;
+                    const maxClicks = 350;
+                    const percentage = (clicks / maxClicks) * 100;
+
+                    return (
+                      <div key={link.id} className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <span className="text-lg">
+                              {ICON_OPTIONS.find(option => option.value === link.icon)?.icon || '🔗'}
+                            </span>
+                            <div>
+                              <p className="font-medium">{link.title}</p>
+                              <p className="text-sm text-muted-foreground truncate max-w-xs">
+                                {link.url.replace(/^https?:\/\//, '')}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className="font-bold">{clicks}</p>
+                            <p className="text-xs text-muted-foreground">clicks</p>
+                          </div>
+                        </div>
+                        <div className="w-full bg-secondary rounded-full h-2">
+                          <div
+                            className="bg-gradient-primary h-2 rounded-full transition-all duration-1000 ease-out"
+                            style={{ width: `${percentage}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+
         {/* Documents Section */}
         <div className="mt-8 space-y-6 animate-slide-up">
           <h2 className="text-2xl font-bold gradient-text">Documents</h2>
