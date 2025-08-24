@@ -64,6 +64,8 @@ export default function Dashboard() {
   const [linkIcon, setLinkIcon] = useState('link');
   
   const [editingLink, setEditingLink] = useState<string | null>(null);
+  const [draggedItem, setDraggedItem] = useState<string | null>(null);
+  const [dragOverItem, setDragOverItem] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) {
