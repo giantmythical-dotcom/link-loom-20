@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useAuth } from '@/contexts/AuthContext';
-import { Link as LinkIcon, Users, Zap, Globe, ArrowRight, Star } from 'lucide-react';
+import { Link as LinkIcon, Users, Zap, Globe, ArrowRight, Star, TrendingUp, Heart, Shield, Sparkles } from 'lucide-react';
 
 const Index = () => {
   const { user } = useAuth();
