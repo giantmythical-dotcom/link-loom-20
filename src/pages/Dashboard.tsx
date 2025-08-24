@@ -13,6 +13,7 @@ import { DocumentsList } from '@/components/DocumentsList';
 import { ProfileSkeleton, LinksSkeleton, DashboardHeaderSkeleton } from '@/components/DashboardSkeleton';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
+import { useAnalytics } from '@/hooks/useAnalytics';
 import { toast } from '@/hooks/use-toast';
 import {
   LogOut,
@@ -57,6 +58,7 @@ export default function Dashboard() {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const { profile, socialLinks, loading, createProfile, updateProfile, addSocialLink, updateSocialLink, deleteSocialLink, uploadAvatar } = useProfile();
+  const { analytics, loading: analyticsLoading, error: analyticsError } = useAnalytics();
   
   const [isCreatingProfile, setIsCreatingProfile] = useState(false);
   const [username, setUsername] = useState('');
@@ -562,8 +564,10 @@ export default function Dashboard() {
                     <span className="text-sm font-medium">{socialLinks.filter(link => link.is_active).length}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-sm text-muted-foreground">Profile Views</span>
-                    <span className="text-sm font-medium">1,247</span>
+                    <span className="text-sm text-muted-foreground">Total Clicks</span>
+                    <span className="text-sm font-medium">
+                      {analyticsLoading ? '...' : analytics.totalClicks}
+                    </span>
                   </div>
                 </div>
               </CardContent>
@@ -779,10 +783,12 @@ export default function Dashboard() {
                       <div className="flex items-center justify-between">
                         <div>
                           <p className="text-sm font-medium text-muted-foreground">Total Clicks</p>
-                          <p className="text-3xl font-bold text-foreground">1,247</p>
+                          <p className="text-3xl font-bold text-foreground">
+                            {analyticsLoading ? '...' : analytics.totalClicks.toLocaleString()}
+                          </p>
                           <p className="text-xs text-accent-emerald flex items-center gap-1 mt-1">
                             <TrendingUp className="w-3 h-3" />
-                            +12% from last week
+                            Real-time data
                           </p>
                         </div>
                         <div className="w-12 h-12 bg-accent-blue/10 rounded-2xl flex items-center justify-center">
@@ -797,10 +803,12 @@ export default function Dashboard() {
                       <div className="flex items-center justify-between">
                         <div>
                           <p className="text-sm font-medium text-muted-foreground">Profile Views</p>
-                          <p className="text-3xl font-bold text-foreground">892</p>
-                          <p className="text-xs text-accent-emerald flex items-center gap-1 mt-1">
-                            <TrendingUp className="w-3 h-3" />
-                            +8% from last week
+                          <p className="text-3xl font-bold text-foreground">
+                            {analyticsLoading ? '...' : analytics.profileViews.toLocaleString()}
+                          </p>
+                          <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
+                            <Eye className="w-3 h-3" />
+                            Estimated
                           </p>
                         </div>
                         <div className="w-12 h-12 bg-accent-emerald/10 rounded-2xl flex items-center justify-center">
@@ -816,10 +824,10 @@ export default function Dashboard() {
                         <div>
                           <p className="text-sm font-medium text-muted-foreground">Top Link</p>
                           <p className="text-lg font-bold truncate">
-                            {socialLinks.length > 0 ? socialLinks[0].title : 'No links yet'}
+                            {analyticsLoading ? '...' : (analytics.topLink?.title || 'No clicks yet')}
                           </p>
                           <p className="text-xs text-muted-foreground">
-                            {socialLinks.length > 0 ? '342 clicks' : 'Add your first link'}
+                            {analyticsLoading ? '...' : (analytics.topLink ? `${analytics.topLink.clicks} clicks` : 'Add your first link')}
                           </p>
                         </div>
                         <div className="w-12 h-12 bg-accent-orange/10 rounded-2xl flex items-center justify-center">
@@ -833,11 +841,13 @@ export default function Dashboard() {
                     <CardContent className="p-6">
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-sm font-medium text-muted-foreground">Click Rate</p>
-                          <p className="text-3xl font-bold text-foreground">67%</p>
-                          <p className="text-xs text-accent-emerald flex items-center gap-1 mt-1">
-                            <TrendingUp className="w-3 h-3" />
-                            +3% from last week
+                          <p className="text-sm font-medium text-muted-foreground">Avg Clicks per Link</p>
+                          <p className="text-3xl font-bold text-foreground">
+                            {analyticsLoading ? '...' : analytics.clickRate.toFixed(1)}
+                          </p>
+                          <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
+                            <Zap className="w-3 h-3" />
+                            Real-time data
                           </p>
                         </div>
                         <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center">
@@ -849,21 +859,20 @@ export default function Dashboard() {
                 </div>
 
                 {/* Link Performance Chart */}
-                {socialLinks.length > 0 && (
+                {!analyticsLoading && analytics.linkPerformance.length > 0 && (
                   <Card className="card-modern">
                     <CardHeader>
                       <CardTitle>Link Performance</CardTitle>
                       <CardDescription>
-                        Click performance for your top links
+                        Click performance for your links
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-4">
-                        {socialLinks.slice(0, 5).map((link, index) => {
-                          const clicks = Math.floor(Math.random() * 300) + 50;
-                          const maxClicks = 350;
-                          const percentage = (clicks / maxClicks) * 100;
-                          
+                        {analytics.linkPerformance.slice(0, 5).map((link) => {
+                          const maxClicks = Math.max(...analytics.linkPerformance.map(l => l.clicks)) || 1;
+                          const percentage = maxClicks > 0 ? (link.clicks / maxClicks) * 100 : 0;
+
                           return (
                             <div key={link.id} className="space-y-2">
                               <div className="flex items-center justify-between">
@@ -879,12 +888,12 @@ export default function Dashboard() {
                                   </div>
                                 </div>
                                 <div className="text-right">
-                                  <p className="font-bold">{clicks}</p>
+                                  <p className="font-bold">{link.clicks}</p>
                                   <p className="text-xs text-muted-foreground">clicks</p>
                                 </div>
                               </div>
                               <div className="w-full bg-secondary rounded-full h-2">
-                                <div 
+                                <div
                                   className="bg-gradient-accent h-2 rounded-full transition-all duration-1000 ease-out"
                                   style={{ width: `${percentage}%` }}
                                 ></div>
@@ -893,6 +902,16 @@ export default function Dashboard() {
                           );
                         })}
                       </div>
+                    </CardContent>
+                  </Card>
+                )}
+
+                {!analyticsLoading && analytics.linkPerformance.length === 0 && (
+                  <Card className="card-modern">
+                    <CardContent className="p-12 text-center">
+                      <BarChart3 className="w-16 h-16 mx-auto mb-4 text-muted-foreground/50" />
+                      <h3 className="text-lg font-medium text-foreground mb-2">No analytics data yet</h3>
+                      <p className="text-muted-foreground">Your link performance will appear here once people start clicking your links.</p>
                     </CardContent>
                   </Card>
                 )}
