@@ -246,6 +246,70 @@ export default function Dashboard() {
     }
   };
 
+  const handleDragStart = (e: React.DragEvent, linkId: string) => {
+    setDraggedItem(linkId);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleDragOver = (e: React.DragEvent, linkId: string) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    if (draggedItem !== linkId) {
+      setDragOverItem(linkId);
+    }
+  };
+
+  const handleDragLeave = () => {
+    setDragOverItem(null);
+  };
+
+  const handleDrop = async (e: React.DragEvent, targetLinkId: string) => {
+    e.preventDefault();
+
+    if (!draggedItem || draggedItem === targetLinkId) {
+      setDraggedItem(null);
+      setDragOverItem(null);
+      return;
+    }
+
+    const draggedIndex = socialLinks.findIndex(link => link.id === draggedItem);
+    const targetIndex = socialLinks.findIndex(link => link.id === targetLinkId);
+
+    if (draggedIndex === -1 || targetIndex === -1) return;
+
+    // Create new array with reordered items
+    const newLinks = [...socialLinks];
+    const [draggedLink] = newLinks.splice(draggedIndex, 1);
+    newLinks.splice(targetIndex, 0, draggedLink);
+
+    // Update positions in database
+    try {
+      const updates = newLinks.map((link, index) =>
+        updateSocialLink(link.id, { position: index })
+      );
+      await Promise.all(updates);
+
+      toast({
+        title: "Links reordered!",
+        description: "Your link order has been updated.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to reorder links",
+        variant: "destructive",
+      });
+    }
+
+    setDraggedItem(null);
+    setDragOverItem(null);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedItem(null);
+    setDragOverItem(null);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-subtle p-4 relative overflow-hidden">
