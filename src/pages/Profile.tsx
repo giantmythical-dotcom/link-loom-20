@@ -114,7 +114,19 @@ export default function Profile() {
           setSocialLinks(linksData || []);
         }
       } catch (error) {
-        console.error('Error:', error);
+        console.error('Unexpected error in fetchProfile:', error);
+        console.error('Error details:', {
+          message: (error as any)?.message,
+          code: (error as any)?.code,
+          details: (error as any)?.details
+        });
+
+        // Check if this is a permission error vs profile not found
+        const errorMessage = (error as any)?.message?.toLowerCase() || '';
+        if (errorMessage.includes('permission') || errorMessage.includes('rls') || errorMessage.includes('policy')) {
+          console.error('This appears to be a database permission issue. Check Supabase RLS policies for public access.');
+        }
+
         setNotFound(true);
       } finally {
         setLoading(false);
