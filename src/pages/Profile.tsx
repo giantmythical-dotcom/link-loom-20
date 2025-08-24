@@ -256,24 +256,52 @@ export default function Profile() {
       
       <div className="container max-w-2xl mx-auto px-4 py-12 relative z-10">
         <div className="text-center mb-12 animate-slide-up">
-          <Avatar className="w-40 h-40 mx-auto mb-8 ring-4 ring-primary/30 shadow-glow hover:scale-105 transition-transform duration-300">
-            <AvatarImage src={profile.avatar_url || ''} />
-            <AvatarFallback className="text-5xl bg-gradient-primary text-primary-foreground">
-              {profile.display_name?.[0]?.toUpperCase() || profile.username[0]?.toUpperCase()}
-            </AvatarFallback>
-          </Avatar>
-          
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 gradient-text leading-tight">
-            {profile.display_name || profile.username}
-          </h1>
-          
-          <p className="text-muted-foreground mb-2 text-lg">@{profile.username}</p>
-          
-          {profile.bio && (
-            <p className="text-xl text-foreground/90 max-w-lg mx-auto mt-6 leading-relaxed">
-              {profile.bio}
-            </p>
-          )}
+          <div className="relative inline-block mb-8">
+            <Avatar className="w-32 h-32 md:w-40 md:h-40 mx-auto ring-4 ring-primary/30 shadow-glow hover:scale-105 transition-all duration-500 hover:ring-primary/50">
+              <AvatarImage src={profile.avatar_url || ''} />
+              <AvatarFallback className="text-4xl md:text-5xl bg-gradient-primary text-primary-foreground">
+                {profile.display_name?.[0]?.toUpperCase() || profile.username[0]?.toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+
+            {/* Floating decoration */}
+            <div className="absolute -top-2 -right-2 w-6 h-6 bg-primary rounded-full opacity-80 animate-pulse"></div>
+            <div className="absolute -bottom-1 -left-1 w-4 h-4 bg-primary-glow rounded-full opacity-60 animate-float"></div>
+          </div>
+
+          <div className="space-y-4">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold gradient-text leading-tight">
+              {profile.display_name || profile.username}
+            </h1>
+
+            <Badge variant="secondary" className="text-base md:text-lg px-4 py-2 hover:bg-secondary/80 transition-colors">
+              @{profile.username}
+            </Badge>
+
+            {profile.bio && (
+              <p className="text-lg md:text-xl text-foreground/90 max-w-lg mx-auto mt-6 leading-relaxed px-4">
+                {profile.bio}
+              </p>
+            )}
+
+            {/* Statistics */}
+            <div className="flex justify-center items-center gap-6 mt-8 text-sm md:text-base">
+              <div className="text-center">
+                <div className="font-bold text-lg gradient-text">{socialLinks.length}</div>
+                <div className="text-muted-foreground">Links</div>
+              </div>
+              <div className="w-px h-8 bg-border"></div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleShare}
+                className="group hover:bg-primary/10 transition-all duration-300"
+              >
+                <Share2 className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
+                Share
+              </Button>
+            </div>
+          </div>
         </div>
 
         <div className="space-y-6 animate-slide-up" style={{ animationDelay: '0.2s' }}>
