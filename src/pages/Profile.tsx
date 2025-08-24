@@ -64,19 +64,26 @@ export default function Profile() {
 
         setProfile(profileData);
 
-        // Track profile view (only if the table exists)
+        // Track profile view (only for anonymous users - authenticated users are tracked elsewhere)
+        // This helps avoid double-counting when profile owners view their own profile
         try {
-          await supabase
-            .from('profile_views')
-            .insert({
-              profile_id: profileData.id,
-              viewed_at: new Date().toISOString(),
-              user_agent: navigator.userAgent,
-              referrer: document.referrer || null
-            });
+          // Check if we have an authenticated session
+          const { data: { session } } = await supabase.auth.getSession();
+
+          // Only track for anonymous users or if viewing someone else's profile
+          if (!session || session.user.id !== profileData.user_id) {
+            await supabase
+              .from('profile_views')
+              .insert({
+                profile_id: profileData.id,
+                viewed_at: new Date().toISOString(),
+                user_agent: navigator.userAgent,
+                referrer: document.referrer || null
+              });
+          }
         } catch (error) {
-          // Silently fail if profile_views table doesn't exist yet
-          console.log('Profile view tracking not available yet:', error);
+          // Silently fail if profile_views table doesn't exist or RLS prevents access
+          console.log('Profile view tracking not available:', error);
         }
 
         // Fetch social links
