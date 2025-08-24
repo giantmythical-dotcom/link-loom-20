@@ -137,6 +137,41 @@ export type Database = {
         }
         Relationships: []
       }
+      link_clicks: {
+        Row: {
+          id: string
+          link_id: string
+          clicked_at: string
+          user_agent: string | null
+          referrer: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          link_id: string
+          clicked_at: string
+          user_agent?: string | null
+          referrer?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          link_id?: string
+          clicked_at?: string
+          user_agent?: string | null
+          referrer?: string | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "link_clicks_link_id_fkey"
+            columns: ["link_id"]
+            isOneToOne: false
+            referencedRelation: "social_links"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
     }
     Views: {
       [_ in never]: never
