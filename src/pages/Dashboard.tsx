@@ -227,6 +227,23 @@ export default function Dashboard() {
     }
   };
 
+  const handleCopyProfileUrl = async () => {
+    const profileUrl = `${window.location.origin}/${profile?.username}`;
+    try {
+      await navigator.clipboard.writeText(profileUrl);
+      toast({
+        title: "Copied!",
+        description: "Profile URL copied to clipboard",
+      });
+    } catch (err) {
+      toast({
+        title: "Error",
+        description: "Failed to copy URL",
+        variant: "destructive",
+      });
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-subtle p-4 relative overflow-hidden">
