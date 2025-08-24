@@ -117,6 +117,116 @@ const Index = () => {
           </Card>
         </div>
 
+        {/* Social Proof Section */}
+        <div className="text-center mb-20 scroll-fade-in">
+          <h2 className="text-2xl md:text-3xl font-bold mb-12 text-muted-foreground">
+            Trusted by creators worldwide
+          </h2>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto mb-16">
+            <div className="text-center group hover:scale-110 transition-transform duration-300">
+              <div className="text-4xl md:text-5xl font-bold gradient-text mb-2">50K+</div>
+              <p className="text-muted-foreground font-medium">Active Users</p>
+            </div>
+            <div className="text-center group hover:scale-110 transition-transform duration-300">
+              <div className="text-4xl md:text-5xl font-bold gradient-text mb-2">2M+</div>
+              <p className="text-muted-foreground font-medium">Links Created</p>
+            </div>
+            <div className="text-center group hover:scale-110 transition-transform duration-300">
+              <div className="text-4xl md:text-5xl font-bold gradient-text mb-2">99.9%</div>
+              <p className="text-muted-foreground font-medium">Uptime</p>
+            </div>
+            <div className="text-center group hover:scale-110 transition-transform duration-300">
+              <div className="text-4xl md:text-5xl font-bold gradient-text mb-2">4.9/5</div>
+              <p className="text-muted-foreground font-medium">User Rating</p>
+            </div>
+          </div>
+
+          <div className="flex justify-center items-center gap-2 text-primary">
+            <Star className="w-5 h-5 fill-current" />
+            <Star className="w-5 h-5 fill-current" />
+            <Star className="w-5 h-5 fill-current" />
+            <Star className="w-5 h-5 fill-current" />
+            <Star className="w-5 h-5 fill-current" />
+            <span className="ml-2 text-foreground font-medium">Loved by thousands of creators</span>
+          </div>
+        </div>
+
+        {/* Testimonials Section */}
+        <div className="mb-20 scroll-fade-in">
+          <h2 className="text-4xl md:text-5xl font-bold text-center mb-16 leading-tight">
+            What <span className="gradient-text">creators</span> are saying
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <Card className="glass border-0 card-elevated group hover:shadow-glow transition-all duration-500">
+              <CardContent className="p-8">
+                <div className="flex mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-5 h-5 fill-current text-primary" />
+                  ))}
+                </div>
+                <p className="text-lg leading-relaxed mb-6 text-foreground/90">
+                  "LinkHub completely transformed how I share my content. The design is beautiful and my engagement has increased by 300%!"
+                </p>
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-gradient-primary rounded-full flex items-center justify-center text-primary-foreground font-bold">
+                    S
+                  </div>
+                  <div>
+                    <p className="font-semibold">Sarah Chen</p>
+                    <p className="text-sm text-muted-foreground">Content Creator</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="glass border-0 card-elevated group hover:shadow-glow transition-all duration-500" style={{ animationDelay: '0.1s' }}>
+              <CardContent className="p-8">
+                <div className="flex mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-5 h-5 fill-current text-primary" />
+                  ))}
+                </div>
+                <p className="text-lg leading-relaxed mb-6 text-foreground/90">
+                  "As a musician, I needed a clean way to share my links. LinkHub's customization options are perfect for my brand."
+                </p>
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-gradient-primary rounded-full flex items-center justify-center text-primary-foreground font-bold">
+                    M
+                  </div>
+                  <div>
+                    <p className="font-semibold">Marcus Rodriguez</p>
+                    <p className="text-sm text-muted-foreground">Musician</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="glass border-0 card-elevated group hover:shadow-glow transition-all duration-500" style={{ animationDelay: '0.2s' }}>
+              <CardContent className="p-8">
+                <div className="flex mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-5 h-5 fill-current text-primary" />
+                  ))}
+                </div>
+                <p className="text-lg leading-relaxed mb-6 text-foreground/90">
+                  "The analytics feature helped me understand my audience better. Simple, powerful, and exactly what I needed."
+                </p>
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-gradient-primary rounded-full flex items-center justify-center text-primary-foreground font-bold">
+                    A
+                  </div>
+                  <div>
+                    <p className="font-semibold">Alex Thompson</p>
+                    <p className="text-sm text-muted-foreground">Digital Marketer</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
         {/* Benefits Section */}
         <div className="text-center mb-20 scroll-fade-in">
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-12 leading-tight">
