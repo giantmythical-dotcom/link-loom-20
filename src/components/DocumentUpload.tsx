@@ -28,13 +28,13 @@ export const DocumentUpload = () => {
   };
 
   const handleUpload = async () => {
-    if (!selectedFile || !title.trim()) return;
+    if (!selectedFile || !title.trim() || !slug.trim()) return;
 
     setUploading(true);
     try {
       // Normalize the slug before upload
       const normalizedSlug = slug.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-      await uploadDocument(selectedFile, title.trim(), normalizedSlug || undefined);
+      await uploadDocument(selectedFile, title.trim(), normalizedSlug);
       setSelectedFile(null);
       setTitle('');
       setSlug('');
@@ -113,7 +113,7 @@ export const DocumentUpload = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="document-slug">Custom URL Slug (optional)</Label>
+              <Label htmlFor="document-slug">URL Slug *</Label>
               <Input
                 id="document-slug"
                 value={slug}
@@ -122,15 +122,16 @@ export const DocumentUpload = () => {
                   setSlug(normalizedSlug);
                 }}
                 placeholder="my-document-name"
+                required
               />
               <p className="text-xs text-muted-foreground">
-                Creates a shareable URL like /username/{slug || 'document-name'}
+                Creates a shareable URL like /username/{slug || 'document-name'}. Required field.
               </p>
             </div>
 
             <Button
               onClick={handleUpload}
-              disabled={!title.trim() || uploading}
+              disabled={!title.trim() || !slug.trim() || uploading}
               className="w-full btn-glow"
             >
               {uploading ? 'Uploading...' : 'Upload Document'}
