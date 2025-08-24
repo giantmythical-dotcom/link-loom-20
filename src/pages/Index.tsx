@@ -49,19 +49,19 @@ const Index = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-6 justify-center animate-zoom-in" style={{ animationDelay: '0.4s' }}>
-            <Button 
-              size="lg" 
-              variant="gradient"
-              className="text-lg px-10 py-4 btn-glow hover:scale-105 transition-transform duration-300"
+            <Button
+              size="xl"
+              variant="glow"
+              className="text-lg px-12 py-5"
               onClick={() => navigate('/auth')}
             >
               Get Started for Free
               <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
-            <Button 
-              size="lg" 
-              variant="outline"
-              className="text-lg px-10 py-4 glass hover:scale-105 transition-all duration-300 hover:shadow-elegant"
+            <Button
+              size="xl"
+              variant="floating"
+              className="text-lg px-12 py-5 glass"
               onClick={() => {
                 const element = document.getElementById('features');
                 element?.scrollIntoView({ behavior: 'smooth' });
