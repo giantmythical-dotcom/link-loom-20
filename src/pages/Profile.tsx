@@ -314,31 +314,43 @@ export default function Profile() {
             </Card>
           ) : (
             socialLinks.map((link, index) => (
-              <Card 
-                key={link.id} 
-                className="glass border-0 card-elevated group cursor-pointer transform hover:scale-[1.02] transition-all duration-300 hover:shadow-glow"
-                onClick={() => handleLinkClick(link.url, link.title)}
+              <Card
+                key={link.id}
+                className={`glass border-0 card-elevated group cursor-pointer transform hover:scale-[1.02] transition-all duration-300 hover:shadow-glow animate-slide-up ${
+                  clickedLinks.has(link.id) ? 'scale-95 bg-primary/10 border-primary/30' : ''
+                }`}
+                onClick={() => handleLinkClick(link.id, link.url, link.title)}
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <CardContent className="p-8">
-                  <div className="flex items-center gap-6">
-                    <div className="w-16 h-16 bg-gradient-primary rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:shadow-glow transition-all duration-300">
-                      <span className="text-3xl">
+                <CardContent className="p-6 md:p-8">
+                  <div className="flex items-center gap-4 md:gap-6">
+                    <div className={`w-12 h-12 md:w-16 md:h-16 bg-gradient-primary rounded-xl md:rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:shadow-glow transition-all duration-300 ${
+                      clickedLinks.has(link.id) ? 'animate-pulse' : ''
+                    }`}>
+                      <span className="text-xl md:text-3xl">
                         {ICON_OPTIONS.find(option => option.value === link.icon)?.icon || '🔗'}
                       </span>
                     </div>
-                    
+
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-bold text-xl group-hover:text-primary transition-colors duration-300 mb-2">
+                      <h3 className="font-bold text-lg md:text-xl group-hover:text-primary transition-colors duration-300 mb-1 md:mb-2">
                         {link.title}
                       </h3>
-                      <p className="text-muted-foreground text-base truncate">
+                      <p className="text-muted-foreground text-sm md:text-base truncate">
                         {link.url.replace(/^https?:\/\//, '')}
                       </p>
                     </div>
-                    
-                    <ExternalLink className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-all duration-300 opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0" />
+
+                    <div className="flex flex-col items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <ExternalLink className="w-5 h-5 md:w-6 md:h-6 text-muted-foreground group-hover:text-primary transition-all duration-300 transform translate-x-2 group-hover:translate-x-0" />
+                      {clickedLinks.has(link.id) && (
+                        <TrendingUp className="w-4 h-4 text-primary animate-bounce" />
+                      )}
+                    </div>
                   </div>
+
+                  {/* Ripple effect */}
+                  <div className="absolute inset-0 rounded-lg bg-primary/5 scale-0 group-active:scale-100 transition-transform duration-200 pointer-events-none"></div>
                 </CardContent>
               </Card>
             ))
