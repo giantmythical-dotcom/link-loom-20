@@ -32,15 +32,39 @@ export function useLinkRedirect(username: string, linkIdentifier: string) {
           return;
         }
 
-        // Now check for document with this user_id
-        const { data: document, error: docError } = await supabase
+        // Now check for document with this user_id (first by slug, then by ID)
+        let document = null;
+        let docError = null;
+        
+        // First try to find by slug
+        const { data: docBySlug, error: slugError } = await supabase
           .from('documents')
           .select('*')
-          .eq('id', linkIdentifier)
+          .eq('slug', linkIdentifier)
           .eq('user_id', profileData.user_id)
           .eq('is_active', true)
           .eq('is_public', true)
           .maybeSingle();
+          
+        if (slugError && slugError.code !== 'PGRST116') throw slugError;
+        
+        if (docBySlug) {
+          document = docBySlug;
+        } else {
+          // If not found by slug, try by document ID
+          const { data: docById, error: idError } = await supabase
+            .from('documents')
+            .select('*')
+            .eq('id', linkIdentifier)
+            .eq('user_id', profileData.user_id)
+            .eq('is_active', true)
+            .eq('is_public', true)
+            .maybeSingle();
+            
+          if (idError && idError.code !== 'PGRST116') throw idError;
+          document = docById;
+          docError = idError;
+        }
           
         console.log('Document query result:', { document, docError });
 

@@ -14,6 +14,7 @@ export interface Document {
   is_active: boolean;
   custom_title?: string;
   custom_icon: string;
+  slug?: string;
   is_public: boolean;
   created_at: string;
   updated_at: string;
@@ -133,7 +134,7 @@ export const useDocuments = () => {
     }
   };
 
-  const updateDocument = async (id: string, updates: Partial<Pick<Document, 'custom_title' | 'custom_icon' | 'is_public'>>) => {
+  const updateDocument = async (id: string, updates: Partial<Pick<Document, 'custom_title' | 'custom_icon' | 'slug' | 'is_public'>>) => {
     try {
       const { error } = await supabase
         .from('documents')

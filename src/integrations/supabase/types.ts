@@ -26,6 +26,7 @@ export type Database = {
           is_active: boolean
           is_public: boolean | null
           mime_type: string
+          slug: string | null
           title: string
           updated_at: string
           user_id: string
@@ -41,6 +42,7 @@ export type Database = {
           is_active?: boolean
           is_public?: boolean | null
           mime_type?: string
+          slug?: string | null
           title: string
           updated_at?: string
           user_id: string
@@ -56,6 +58,7 @@ export type Database = {
           is_active?: boolean
           is_public?: boolean | null
           mime_type?: string
+          slug?: string | null
           title?: string
           updated_at?: string
           user_id?: string

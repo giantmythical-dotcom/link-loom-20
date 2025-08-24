@@ -31,6 +31,7 @@ export const DocumentsList = () => {
   const [editingDocument, setEditingDocument] = useState<Document | null>(null);
   const [customTitle, setCustomTitle] = useState('');
   const [customIcon, setCustomIcon] = useState('file-text');
+  const [customSlug, setCustomSlug] = useState('');
 
   const formatFileSize = (bytes: number) => {
     if (bytes === 0) return '0 Bytes';
@@ -42,7 +43,8 @@ export const DocumentsList = () => {
 
   const getShareableLink = (document: Document) => {
     if (!profile?.username) return '';
-    return `${window.location.origin}/${profile.username}/${document.id}`;
+    const identifier = document.slug || document.id;
+    return `${window.location.origin}/${profile.username}/${identifier}`;
   };
 
   const copyLink = async (document: Document) => {
@@ -73,20 +75,36 @@ export const DocumentsList = () => {
     setEditingDocument(document);
     setCustomTitle(document.custom_title || '');
     setCustomIcon(document.custom_icon || 'file-text');
+    setCustomSlug(document.slug || '');
   };
 
   const handleUpdateDocument = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingDocument) return;
 
-    await updateDocument(editingDocument.id, {
+    const updates: any = {
       custom_title: customTitle.trim() || null,
       custom_icon: customIcon,
-    });
+    };
+
+    // Only include slug if it's not empty and different from current
+    if (customSlug.trim()) {
+      // Convert to URL-friendly slug
+      const urlSlug = customSlug.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      if (urlSlug !== editingDocument.slug) {
+        updates.slug = urlSlug;
+      }
+    } else if (editingDocument.slug) {
+      // Remove slug if cleared
+      updates.slug = null;
+    }
+
+    await updateDocument(editingDocument.id, updates);
 
     setEditingDocument(null);
     setCustomTitle('');
     setCustomIcon('file-text');
+    setCustomSlug('');
   };
 
   const handleToggleVisibility = async (document: Document) => {
@@ -270,6 +288,19 @@ export const DocumentsList = () => {
                     ))}
                   </SelectContent>
                 </Select>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="custom-slug">Custom URL Slug (optional)</Label>
+                <Input
+                  id="custom-slug"
+                  value={customSlug}
+                  onChange={(e) => setCustomSlug(e.target.value)}
+                  placeholder="my-resume"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Create a memorable URL like /{profile?.username || 'username'}/{customSlug.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'custom-slug'}
+                </p>
               </div>
               
               <div className="flex justify-end gap-2">
