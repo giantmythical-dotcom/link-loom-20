@@ -26,7 +26,10 @@ import {
   Eye,
   GripVertical,
   BarChart3,
-  Copy
+  Copy,
+  TrendingUp,
+  Star,
+  Zap
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
