@@ -12,7 +12,7 @@ import { ExternalLink, Link as LinkIcon, Share2, Heart, Copy } from 'lucide-reac
 
 const ICON_OPTIONS = [
   { value: 'link', label: 'Link', icon: '🔗' },
-  { value: 'github', label: 'GitHub', icon: '💻' },
+  { value: 'github', label: 'GitHub', icon: '���' },
   { value: 'linkedin', label: 'LinkedIn', icon: '💼' },
   { value: 'twitter', label: 'Twitter/X', icon: '🐦' },
   { value: 'instagram', label: 'Instagram', icon: '📷' },
@@ -42,12 +42,19 @@ export default function Profile() {
       }
 
       try {
+        // Check authentication state for debugging
+        const { data: { session } } = await supabase.auth.getSession();
+        console.log('Current auth session:', session ? 'authenticated' : 'anonymous');
+        console.log('Fetching profile for username:', username);
+
         // Fetch profile
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
           .select('*')
           .eq('username', username.toLowerCase())
           .maybeSingle();
+
+        console.log('Profile query result:', { profileData, profileError });
 
         if (profileError) {
           console.error('Error fetching profile:', profileError);
