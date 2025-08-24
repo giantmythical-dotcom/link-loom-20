@@ -29,7 +29,10 @@ import {
   Copy,
   TrendingUp,
   Star,
-  Zap
+  Zap,
+  Settings,
+  Globe,
+  FileText
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -69,6 +72,7 @@ export default function Dashboard() {
   const [editingLink, setEditingLink] = useState<string | null>(null);
   const [draggedItem, setDraggedItem] = useState<string | null>(null);
   const [dragOverItem, setDragOverItem] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'links' | 'analytics' | 'documents'>('links');
 
   useEffect(() => {
     if (!user) {
@@ -84,6 +88,7 @@ export default function Dashboard() {
     }
   }, [profile]);
 
+  // All the handler functions remain the same
   const handleSignOut = async () => {
     await signOut();
     navigate('/');
@@ -249,6 +254,7 @@ export default function Dashboard() {
     }
   };
 
+  // Drag and drop handlers remain the same
   const handleDragStart = (e: React.DragEvent, linkId: string) => {
     setDraggedItem(linkId);
     e.dataTransfer.effectAllowed = 'move';
@@ -268,7 +274,7 @@ export default function Dashboard() {
 
   const handleDrop = async (e: React.DragEvent, targetLinkId: string) => {
     e.preventDefault();
-
+    
     if (!draggedItem || draggedItem === targetLinkId) {
       setDraggedItem(null);
       setDragOverItem(null);
@@ -280,18 +286,16 @@ export default function Dashboard() {
 
     if (draggedIndex === -1 || targetIndex === -1) return;
 
-    // Create new array with reordered items
     const newLinks = [...socialLinks];
     const [draggedLink] = newLinks.splice(draggedIndex, 1);
     newLinks.splice(targetIndex, 0, draggedLink);
 
-    // Update positions in database
     try {
-      const updates = newLinks.map((link, index) =>
+      const updates = newLinks.map((link, index) => 
         updateSocialLink(link.id, { position: index })
       );
       await Promise.all(updates);
-
+      
       toast({
         title: "Links reordered!",
         description: "Your link order has been updated.",
@@ -315,22 +319,14 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-subtle p-4 relative overflow-hidden">
-        {/* Animated background elements */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-primary/3 rounded-full blur-3xl animate-float"></div>
-          <div className="absolute bottom-1/3 left-1/4 w-80 h-80 bg-primary-glow/3 rounded-full blur-3xl animate-float" style={{ animationDelay: '3s' }}></div>
-        </div>
-
-        <div className="max-w-6xl mx-auto relative z-10">
+      <div className="min-h-screen bg-background">
+        <div className="container-modern py-8">
           <DashboardHeaderSkeleton />
-
-          <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
-            <div className="xl:col-span-1">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mt-8">
+            <div className="lg:col-span-1">
               <ProfileSkeleton />
             </div>
-
-            <div className="lg:col-span-2">
+            <div className="lg:col-span-3">
               <LinksSkeleton />
             </div>
           </div>
@@ -341,128 +337,128 @@ export default function Dashboard() {
 
   if (!profile) {
     return (
-      <div className="min-h-screen bg-gradient-subtle p-4 relative overflow-hidden">
-        {/* Animated background elements */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/3 rounded-full blur-3xl animate-float"></div>
-          <div className="absolute bottom-1/3 right-1/4 w-80 h-80 bg-primary-glow/3 rounded-full blur-3xl animate-float" style={{ animationDelay: '3s' }}></div>
-        </div>
-        
-        <div className="max-w-2xl mx-auto relative z-10">
-          <div className="flex justify-between items-center mb-10">
-            <h1 className="text-4xl font-bold gradient-text">
-              Create Your Profile
-            </h1>
+      <div className="min-h-screen bg-background">
+        <div className="container-modern py-8">
+          <div className="flex justify-between items-center mb-8">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-accent rounded-xl flex items-center justify-center">
+                <LinkIcon className="w-6 h-6 text-white" />
+              </div>
+              <span className="text-xl font-semibold">LinkHub</span>
+            </div>
             <div className="flex items-center gap-3">
               <ThemeToggle />
-              <Button variant="outline" onClick={handleSignOut} className="glass">
+              <Button variant="outline" onClick={handleSignOut}>
                 <LogOut className="w-4 h-4 mr-2" />
                 Sign Out
               </Button>
             </div>
           </div>
 
-          <Card className="glass border-0 card-elevated animate-slide-up">
-            <CardHeader className="pb-6">
-              <CardTitle className="text-2xl">Welcome to LinkHub!</CardTitle>
-              <CardDescription className="text-lg leading-relaxed">
-                Let's set up your profile to get started. Choose a unique username that will be part of your public profile URL.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="pb-8">
-              <form onSubmit={handleCreateProfile} className="space-y-6">
-                <div className="space-y-3">
-                  <Label htmlFor="username" className="text-base font-medium">Username</Label>
-                  <Input
-                    id="username"
-                    placeholder="your-username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
-                    required
-                    className="h-12 text-base"
-                  />
-                  <p className="text-sm text-muted-foreground">
-                    Your profile will be available at: <span className="font-medium text-primary">{window.location.origin}/{username}</span>
-                  </p>
-                </div>
-                <div className="space-y-3">
-                  <Label htmlFor="display-name" className="text-base font-medium">Display Name (optional)</Label>
-                  <Input
-                    id="display-name"
-                    placeholder="Your Display Name"
-                    value={displayName}
-                    onChange={(e) => setDisplayName(e.target.value)}
-                    className="h-12 text-base"
-                  />
-                </div>
-                <Button 
-                  type="submit" 
-                  className="w-full h-12 text-base btn-glow" 
-                  variant="gradient"
-                  disabled={isCreatingProfile}
-                >
-                  {isCreatingProfile ? "Creating Profile..." : "Create Profile"}
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
+          <div className="max-w-2xl mx-auto">
+            <div className="text-center mb-8">
+              <h1 className="text-title font-bold text-foreground mb-2">
+                Welcome to LinkHub!
+              </h1>
+              <p className="text-muted-foreground">
+                Let's create your profile to get started. Choose a unique username that will be part of your public profile URL.
+              </p>
+            </div>
+
+            <Card className="card-modern">
+              <CardContent className="p-8">
+                <form onSubmit={handleCreateProfile} className="space-y-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="username">Username</Label>
+                    <Input
+                      id="username"
+                      placeholder="your-username"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
+                      required
+                      className="focus-visible-modern"
+                    />
+                    <p className="text-sm text-muted-foreground">
+                      Your profile will be available at: <span className="font-medium text-accent-blue">{window.location.origin}/{username}</span>
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="display-name">Display Name (optional)</Label>
+                    <Input
+                      id="display-name"
+                      placeholder="Your Display Name"
+                      value={displayName}
+                      onChange={(e) => setDisplayName(e.target.value)}
+                      className="focus-visible-modern"
+                    />
+                  </div>
+                  <Button 
+                    type="submit" 
+                    className="w-full btn-modern bg-accent-blue hover:bg-accent-blue/90 text-white"
+                    disabled={isCreatingProfile}
+                  >
+                    {isCreatingProfile ? "Creating Profile..." : "Create Profile"}
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-subtle p-4 relative overflow-hidden">
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-primary/3 rounded-full blur-3xl animate-float"></div>
-        <div className="absolute bottom-1/3 left-1/4 w-80 h-80 bg-primary-glow/3 rounded-full blur-3xl animate-float" style={{ animationDelay: '3s' }}></div>
-      </div>
-      
-      <div className="max-w-6xl mx-auto relative z-10">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-10 animate-slide-up">
-          <h1 className="text-4xl font-bold gradient-text">
-            Dashboard
-          </h1>
-          <div className="flex items-center gap-3">
-            <Button
-              variant="outline"
-              onClick={() => navigate(`/${profile.username}`)}
-              className="glass hover:shadow-elegant transition-all duration-300"
-            >
-              <Eye className="w-4 h-4 mr-2" />
-              View Profile
-            </Button>
-            <ThemeToggle />
-            <Button variant="outline" onClick={handleSignOut} className="glass">
-              <LogOut className="w-4 h-4 mr-2" />
-              Sign Out
-            </Button>
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
+        <div className="container-modern py-4">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-accent rounded-xl flex items-center justify-center">
+                <LinkIcon className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <span className="text-xl font-semibold">LinkHub</span>
+                <p className="text-sm text-muted-foreground">Dashboard</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <Button
+                variant="outline"
+                onClick={() => navigate(`/${profile.username}`)}
+                className="btn-modern"
+              >
+                <Eye className="w-4 h-4 mr-2" />
+                View Profile
+              </Button>
+              <ThemeToggle />
+              <Button variant="outline" onClick={handleSignOut}>
+                <LogOut className="w-4 h-4 mr-2" />
+                Sign Out
+              </Button>
+            </div>
           </div>
         </div>
+      </header>
 
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
-          {/* Profile Section */}
-          <div className="xl:col-span-1">
-            <Card className="glass border-0 card-elevated animate-slide-up">
-              <CardHeader className="pb-6">
-                <CardTitle className="flex items-center gap-3 text-xl">
-                  <User className="w-6 h-6" />
-                  Profile
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex flex-col items-center space-y-4">
-                  <div className="relative group">
-                    <Avatar className="w-24 h-24 ring-4 ring-primary/20 group-hover:ring-primary/40 transition-all duration-300">
+      <div className="container-modern py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          {/* Profile Sidebar */}
+          <div className="lg:col-span-1 space-y-6">
+            {/* Profile Card */}
+            <Card className="card-modern">
+              <CardContent className="p-6">
+                <div className="text-center space-y-4">
+                  <div className="relative inline-block">
+                    <Avatar className="w-24 h-24 border-4 border-accent-blue/20">
                       <AvatarImage src={profile.avatar_url || ''} />
-                      <AvatarFallback className="text-2xl bg-gradient-primary text-primary-foreground">
+                      <AvatarFallback className="text-2xl bg-gradient-accent text-white">
                         {profile.display_name?.[0]?.toUpperCase() || profile.username[0]?.toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
-                    <label htmlFor="avatar-upload" className="absolute -bottom-1 -right-1 cursor-pointer group">
-                      <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center hover:bg-primary/90 hover:scale-110 transition-all duration-300 shadow-lg hover:shadow-glow">
+                    <label htmlFor="avatar-upload" className="absolute -bottom-1 -right-1 cursor-pointer">
+                      <div className="w-8 h-8 bg-accent-blue text-white rounded-full flex items-center justify-center hover:bg-accent-blue/90 transition-colors">
                         <Upload className="w-4 h-4" />
                       </div>
                       <input
@@ -474,94 +470,152 @@ export default function Dashboard() {
                       />
                     </label>
                   </div>
-
-                  <div className="text-center space-y-2">
-                    <h3 className="font-semibold text-lg">
+                  
+                  <div className="space-y-2">
+                    <h3 className="text-lg font-semibold text-foreground">
                       {profile.display_name || profile.username}
                     </h3>
-                    <Badge variant="secondary" className="hover:bg-secondary/80 transition-colors">
+                    <Badge variant="secondary" className="text-xs">
                       @{profile.username}
                     </Badge>
                     {profile.bio && (
-                      <p className="text-sm text-muted-foreground mt-2 leading-relaxed">{profile.bio}</p>
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        {profile.bio}
+                      </p>
                     )}
                   </div>
-
-                  {/* Profile URL */}
-                  <div className="w-full">
-                    <Button
-                      variant="outline"
+                  
+                  <div className="space-y-2">
+                    <Button 
+                      variant="outline" 
                       size="sm"
                       onClick={handleCopyProfileUrl}
-                      className="w-full text-xs hover:bg-primary/10 transition-all duration-300 group"
+                      className="w-full btn-modern"
                     >
-                      <Copy className="w-3 h-3 mr-2 group-hover:scale-110 transition-transform" />
+                      <Copy className="w-4 h-4 mr-2" />
                       Copy Profile URL
                     </Button>
+                    
+                    <Dialog open={isEditingProfile} onOpenChange={setIsEditingProfile}>
+                      <DialogTrigger asChild>
+                        <Button variant="outline" size="sm" className="w-full btn-modern">
+                          <Edit className="w-4 h-4 mr-2" />
+                          Edit Profile
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Edit Profile</DialogTitle>
+                          <DialogDescription>
+                            Update your profile information
+                          </DialogDescription>
+                        </DialogHeader>
+                        <form onSubmit={handleUpdateProfile} className="space-y-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="edit-display-name">Display Name</Label>
+                            <Input
+                              id="edit-display-name"
+                              value={displayName}
+                              onChange={(e) => setDisplayName(e.target.value)}
+                              placeholder="Your display name"
+                              className="focus-visible-modern"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="edit-bio">Bio</Label>
+                            <Textarea
+                              id="edit-bio"
+                              value={bio}
+                              onChange={(e) => setBio(e.target.value)}
+                              placeholder="Tell people about yourself..."
+                              rows={3}
+                              className="focus-visible-modern"
+                            />
+                          </div>
+                          <div className="flex justify-end gap-2">
+                            <Button type="button" variant="outline" onClick={() => setIsEditingProfile(false)}>
+                              Cancel
+                            </Button>
+                            <Button type="submit" className="bg-accent-blue hover:bg-accent-blue/90 text-white">
+                              Save Changes
+                            </Button>
+                          </div>
+                        </form>
+                      </DialogContent>
+                    </Dialog>
                   </div>
                 </div>
+              </CardContent>
+            </Card>
 
-                <Dialog open={isEditingProfile} onOpenChange={setIsEditingProfile}>
-                  <DialogTrigger asChild>
-                    <Button variant="outline" className="w-full hover:scale-105 transition-all duration-300 group">
-                      <Edit className="w-4 h-4 mr-2 group-hover:rotate-12 transition-transform" />
-                      Edit Profile
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Edit Profile</DialogTitle>
-                      <DialogDescription>
-                        Update your profile information
-                      </DialogDescription>
-                    </DialogHeader>
-                    <form onSubmit={handleUpdateProfile} className="space-y-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="edit-display-name">Display Name</Label>
-                        <Input
-                          id="edit-display-name"
-                          value={displayName}
-                          onChange={(e) => setDisplayName(e.target.value)}
-                          placeholder="Your display name"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="edit-bio">Bio</Label>
-                        <Textarea
-                          id="edit-bio"
-                          value={bio}
-                          onChange={(e) => setBio(e.target.value)}
-                          placeholder="Tell people about yourself..."
-                          rows={3}
-                        />
-                      </div>
-                      <div className="flex justify-end gap-2">
-                        <Button type="button" variant="outline" onClick={() => setIsEditingProfile(false)}>
-                          Cancel
-                        </Button>
-                        <Button type="submit" variant="gradient">
-                          Save Changes
-                        </Button>
-                      </div>
-                    </form>
-                  </DialogContent>
-                </Dialog>
+            {/* Quick Stats */}
+            <Card className="card-modern">
+              <CardContent className="p-6">
+                <h4 className="text-sm font-medium text-muted-foreground mb-4">Quick Stats</h4>
+                <div className="space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-sm text-muted-foreground">Total Links</span>
+                    <span className="text-sm font-medium">{socialLinks.length}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm text-muted-foreground">Active Links</span>
+                    <span className="text-sm font-medium">{socialLinks.filter(link => link.is_active).length}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm text-muted-foreground">Profile Views</span>
+                    <span className="text-sm font-medium">1,247</span>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </div>
 
-          {/* Links Section */}
-          <div className="lg:col-span-2">
-            <Card className="shadow-xl border-0 bg-card/95 backdrop-blur-sm">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center gap-2">
-                    <LinkIcon className="w-5 h-5" />
-                    Social Links
-                  </CardTitle>
+          {/* Main Content */}
+          <div className="lg:col-span-3 space-y-6">
+            {/* Navigation Tabs */}
+            <div className="flex gap-1 bg-secondary/50 p-1 rounded-lg">
+              <Button
+                variant={activeTab === 'links' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setActiveTab('links')}
+                className={activeTab === 'links' ? 'bg-background shadow-sm' : ''}
+              >
+                <LinkIcon className="w-4 h-4 mr-2" />
+                Links
+              </Button>
+              <Button
+                variant={activeTab === 'analytics' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setActiveTab('analytics')}
+                className={activeTab === 'analytics' ? 'bg-background shadow-sm' : ''}
+              >
+                <BarChart3 className="w-4 h-4 mr-2" />
+                Analytics
+              </Button>
+              <Button
+                variant={activeTab === 'documents' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setActiveTab('documents')}
+                className={activeTab === 'documents' ? 'bg-background shadow-sm' : ''}
+              >
+                <FileText className="w-4 h-4 mr-2" />
+                Documents
+              </Button>
+            </div>
+
+            {/* Links Tab */}
+            {activeTab === 'links' && (
+              <Card className="card-modern">
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <div>
+                    <CardTitle className="text-xl">Manage Links</CardTitle>
+                    <CardDescription>
+                      Add, edit, and organize your social media links
+                    </CardDescription>
+                  </div>
                   <Dialog open={isAddingLink} onOpenChange={setIsAddingLink}>
                     <DialogTrigger asChild>
-                      <Button variant="gradient" size="sm">
+                      <Button className="bg-accent-blue hover:bg-accent-blue/90 text-white">
                         <Plus className="w-4 h-4 mr-2" />
                         Add Link
                       </Button>
@@ -582,6 +636,7 @@ export default function Dashboard() {
                             onChange={(e) => setLinkTitle(e.target.value)}
                             placeholder="e.g., My GitHub"
                             required
+                            className="focus-visible-modern"
                           />
                         </div>
                         <div className="space-y-2">
@@ -593,12 +648,13 @@ export default function Dashboard() {
                             onChange={(e) => setLinkUrl(e.target.value)}
                             placeholder="https://github.com/yourusername"
                             required
+                            className="focus-visible-modern"
                           />
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="link-icon">Icon</Label>
                           <Select value={linkIcon} onValueChange={setLinkIcon}>
-                            <SelectTrigger>
+                            <SelectTrigger className="focus-visible-modern">
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
@@ -617,238 +673,248 @@ export default function Dashboard() {
                           <Button type="button" variant="outline" onClick={() => setIsAddingLink(false)}>
                             Cancel
                           </Button>
-                          <Button type="submit" variant="gradient">
+                          <Button type="submit" className="bg-accent-blue hover:bg-accent-blue/90 text-white">
                             Add Link
                           </Button>
                         </div>
                       </form>
                     </DialogContent>
                   </Dialog>
-                </div>
-              </CardHeader>
-              <CardContent>
-                {socialLinks.length === 0 ? (
-                  <div className="text-center py-8 text-muted-foreground">
-                    <LinkIcon className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                    <p>No links added yet</p>
-                    <p className="text-sm">Add your first social media link or website</p>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    {socialLinks.map((link, index) => (
-                      <div
-                        key={link.id}
-                        draggable
-                        onDragStart={(e) => handleDragStart(e, link.id)}
-                        onDragOver={(e) => handleDragOver(e, link.id)}
-                        onDragLeave={handleDragLeave}
-                        onDrop={(e) => handleDrop(e, link.id)}
-                        onDragEnd={handleDragEnd}
-                        className={`flex items-center gap-3 p-4 rounded-lg border bg-secondary/5 hover:bg-secondary/10 hover:shadow-md transition-all duration-300 group animate-slide-up ${
-                          draggedItem === link.id ? 'opacity-50 scale-95 rotate-2' : ''
-                        } ${
-                          dragOverItem === link.id ? 'border-primary bg-primary/5 scale-102' : ''
-                        }`}
-                        style={{ animationDelay: `${index * 0.1}s` }}
-                      >
+                </CardHeader>
+                <CardContent>
+                  {socialLinks.length === 0 ? (
+                    <div className="text-center py-12">
+                      <LinkIcon className="w-12 h-12 mx-auto mb-4 text-muted-foreground/50" />
+                      <h3 className="text-lg font-medium text-foreground mb-2">No links yet</h3>
+                      <p className="text-muted-foreground mb-6">Add your first social media link or website</p>
+                      <Dialog open={isAddingLink} onOpenChange={setIsAddingLink}>
+                        <DialogTrigger asChild>
+                          <Button className="bg-accent-blue hover:bg-accent-blue/90 text-white">
+                            <Plus className="w-4 h-4 mr-2" />
+                            Add Your First Link
+                          </Button>
+                        </DialogTrigger>
+                      </Dialog>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {socialLinks.map((link, index) => (
                         <div
-                          className="cursor-grab hover:cursor-grabbing opacity-50 group-hover:opacity-100 transition-opacity"
-                          onMouseDown={(e) => e.preventDefault()}
+                          key={link.id}
+                          draggable
+                          onDragStart={(e) => handleDragStart(e, link.id)}
+                          onDragOver={(e) => handleDragOver(e, link.id)}
+                          onDragLeave={handleDragLeave}
+                          onDrop={(e) => handleDrop(e, link.id)}
+                          onDragEnd={handleDragEnd}
+                          className={`flex items-center gap-4 p-4 rounded-lg border bg-secondary/5 hover:bg-secondary/10 transition-all duration-200 ${
+                            draggedItem === link.id ? 'opacity-50 scale-95' : ''
+                          } ${
+                            dragOverItem === link.id ? 'border-accent-blue bg-accent-blue/5' : ''
+                          }`}
                         >
-                          <GripVertical className="w-4 h-4 text-muted-foreground" />
-                        </div>
-
-                        <div className="text-xl group-hover:scale-110 transition-transform duration-300">
-                          {ICON_OPTIONS.find(option => option.value === link.icon)?.icon || '🔗'}
-                        </div>
-
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2">
-                            <h4 className="font-medium truncate group-hover:text-primary transition-colors">{link.title}</h4>
-                            {!link.is_active && (
-                              <Badge variant="secondary" className="text-xs animate-pulse">Hidden</Badge>
-                            )}
+                          <div className="cursor-grab hover:cursor-grabbing text-muted-foreground">
+                            <GripVertical className="w-4 h-4" />
                           </div>
-                          <p className="text-sm text-muted-foreground truncate">{link.url}</p>
-                        </div>
-
-                        <div className="flex items-center gap-2 opacity-70 group-hover:opacity-100 transition-opacity">
-                          <Switch
-                            checked={link.is_active}
-                            onCheckedChange={(checked) => handleToggleLink(link.id, checked)}
-                          />
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => window.open(link.url, '_blank')}
-                            className="hover:scale-110 transition-transform duration-300"
-                          >
-                            <ExternalLink className="w-4 h-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleDeleteLink(link.id)}
-                            className="text-destructive hover:text-destructive hover:scale-110 transition-all duration-300"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-
-        {/* Analytics Section */}
-        <div className="mt-8 space-y-6 animate-slide-up">
-          <h2 className="text-2xl font-bold gradient-text flex items-center gap-3">
-            <BarChart3 className="w-7 h-7" />
-            Analytics
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Total Clicks */}
-            <Card className="glass border-0 card-elevated group hover:shadow-glow transition-all duration-500">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">Total Clicks</p>
-                    <p className="text-3xl font-bold gradient-text">1,247</p>
-                    <p className="text-xs text-green-500 flex items-center gap-1 mt-1">
-                      <TrendingUp className="w-3 h-3" />
-                      +12% from last week
-                    </p>
-                  </div>
-                  <div className="w-12 h-12 bg-gradient-primary rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <BarChart3 className="w-6 h-6 text-primary-foreground" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Profile Views */}
-            <Card className="glass border-0 card-elevated group hover:shadow-glow transition-all duration-500">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">Profile Views</p>
-                    <p className="text-3xl font-bold gradient-text">892</p>
-                    <p className="text-xs text-green-500 flex items-center gap-1 mt-1">
-                      <TrendingUp className="w-3 h-3" />
-                      +8% from last week
-                    </p>
-                  </div>
-                  <div className="w-12 h-12 bg-gradient-primary rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <Eye className="w-6 h-6 text-primary-foreground" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Top Link */}
-            <Card className="glass border-0 card-elevated group hover:shadow-glow transition-all duration-500">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">Top Link</p>
-                    <p className="text-lg font-bold truncate">
-                      {socialLinks.length > 0 ? socialLinks[0].title : 'No links yet'}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {socialLinks.length > 0 ? '342 clicks' : 'Add your first link'}
-                    </p>
-                  </div>
-                  <div className="w-12 h-12 bg-gradient-primary rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <Star className="w-6 h-6 text-primary-foreground" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Conversion Rate */}
-            <Card className="glass border-0 card-elevated group hover:shadow-glow transition-all duration-500">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">Click Rate</p>
-                    <p className="text-3xl font-bold gradient-text">67%</p>
-                    <p className="text-xs text-green-500 flex items-center gap-1 mt-1">
-                      <TrendingUp className="w-3 h-3" />
-                      +3% from last week
-                    </p>
-                  </div>
-                  <div className="w-12 h-12 bg-gradient-primary rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <Zap className="w-6 h-6 text-primary-foreground" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Link Performance */}
-          {socialLinks.length > 0 && (
-            <Card className="glass border-0 card-elevated">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <BarChart3 className="w-5 h-5" />
-                  Link Performance
-                </CardTitle>
-                <CardDescription>
-                  Click performance for your top links
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {socialLinks.slice(0, 5).map((link, index) => {
-                    // Mock data for demonstration
-                    const clicks = Math.floor(Math.random() * 300) + 50;
-                    const maxClicks = 350;
-                    const percentage = (clicks / maxClicks) * 100;
-
-                    return (
-                      <div key={link.id} className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <span className="text-lg">
-                              {ICON_OPTIONS.find(option => option.value === link.icon)?.icon || '🔗'}
-                            </span>
-                            <div>
-                              <p className="font-medium">{link.title}</p>
-                              <p className="text-sm text-muted-foreground truncate max-w-xs">
-                                {link.url.replace(/^https?:\/\//, '')}
-                              </p>
+                          
+                          <div className="text-2xl">
+                            {ICON_OPTIONS.find(option => option.value === link.icon)?.icon || '🔗'}
+                          </div>
+                          
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              <h4 className="font-medium truncate">{link.title}</h4>
+                              {!link.is_active && (
+                                <Badge variant="secondary" className="text-xs">Hidden</Badge>
+                              )}
                             </div>
+                            <p className="text-sm text-muted-foreground truncate">{link.url}</p>
                           </div>
-                          <div className="text-right">
-                            <p className="font-bold">{clicks}</p>
-                            <p className="text-xs text-muted-foreground">clicks</p>
+                          
+                          <div className="flex items-center gap-2">
+                            <Switch
+                              checked={link.is_active}
+                              onCheckedChange={(checked) => handleToggleLink(link.id, checked)}
+                            />
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => window.open(link.url, '_blank')}
+                              className="hover-lift"
+                            >
+                              <ExternalLink className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleDeleteLink(link.id)}
+                              className="text-destructive hover:text-destructive hover-lift"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
                           </div>
                         </div>
-                        <div className="w-full bg-secondary rounded-full h-2">
-                          <div
-                            className="bg-gradient-primary h-2 rounded-full transition-all duration-1000 ease-out"
-                            style={{ width: `${percentage}%` }}
-                          ></div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Analytics Tab */}
+            {activeTab === 'analytics' && (
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <Card className="card-modern">
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-medium text-muted-foreground">Total Clicks</p>
+                          <p className="text-3xl font-bold text-foreground">1,247</p>
+                          <p className="text-xs text-accent-emerald flex items-center gap-1 mt-1">
+                            <TrendingUp className="w-3 h-3" />
+                            +12% from last week
+                          </p>
+                        </div>
+                        <div className="w-12 h-12 bg-accent-blue/10 rounded-2xl flex items-center justify-center">
+                          <BarChart3 className="w-6 h-6 text-accent-blue" />
                         </div>
                       </div>
-                    );
-                  })}
-                </div>
-              </CardContent>
-            </Card>
-          )}
-        </div>
+                    </CardContent>
+                  </Card>
 
-        {/* Documents Section */}
-        <div className="mt-8 space-y-6 animate-slide-up">
-          <h2 className="text-2xl font-bold gradient-text">Documents</h2>
-          <div className="space-y-6">
-            <DocumentUpload />
-            <DocumentsList />
+                  <Card className="card-modern">
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-medium text-muted-foreground">Profile Views</p>
+                          <p className="text-3xl font-bold text-foreground">892</p>
+                          <p className="text-xs text-accent-emerald flex items-center gap-1 mt-1">
+                            <TrendingUp className="w-3 h-3" />
+                            +8% from last week
+                          </p>
+                        </div>
+                        <div className="w-12 h-12 bg-accent-emerald/10 rounded-2xl flex items-center justify-center">
+                          <Eye className="w-6 h-6 text-accent-emerald" />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="card-modern">
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-medium text-muted-foreground">Top Link</p>
+                          <p className="text-lg font-bold truncate">
+                            {socialLinks.length > 0 ? socialLinks[0].title : 'No links yet'}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {socialLinks.length > 0 ? '342 clicks' : 'Add your first link'}
+                          </p>
+                        </div>
+                        <div className="w-12 h-12 bg-accent-orange/10 rounded-2xl flex items-center justify-center">
+                          <Star className="w-6 h-6 text-accent-orange" />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="card-modern">
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-medium text-muted-foreground">Click Rate</p>
+                          <p className="text-3xl font-bold text-foreground">67%</p>
+                          <p className="text-xs text-accent-emerald flex items-center gap-1 mt-1">
+                            <TrendingUp className="w-3 h-3" />
+                            +3% from last week
+                          </p>
+                        </div>
+                        <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center">
+                          <Zap className="w-6 h-6 text-primary" />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Link Performance Chart */}
+                {socialLinks.length > 0 && (
+                  <Card className="card-modern">
+                    <CardHeader>
+                      <CardTitle>Link Performance</CardTitle>
+                      <CardDescription>
+                        Click performance for your top links
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        {socialLinks.slice(0, 5).map((link, index) => {
+                          const clicks = Math.floor(Math.random() * 300) + 50;
+                          const maxClicks = 350;
+                          const percentage = (clicks / maxClicks) * 100;
+                          
+                          return (
+                            <div key={link.id} className="space-y-2">
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                  <span className="text-lg">
+                                    {ICON_OPTIONS.find(option => option.value === link.icon)?.icon || '🔗'}
+                                  </span>
+                                  <div>
+                                    <p className="font-medium">{link.title}</p>
+                                    <p className="text-sm text-muted-foreground truncate max-w-xs">
+                                      {link.url.replace(/^https?:\/\//, '')}
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className="text-right">
+                                  <p className="font-bold">{clicks}</p>
+                                  <p className="text-xs text-muted-foreground">clicks</p>
+                                </div>
+                              </div>
+                              <div className="w-full bg-secondary rounded-full h-2">
+                                <div 
+                                  className="bg-gradient-accent h-2 rounded-full transition-all duration-1000 ease-out"
+                                  style={{ width: `${percentage}%` }}
+                                ></div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+              </div>
+            )}
+
+            {/* Documents Tab */}
+            {activeTab === 'documents' && (
+              <div className="space-y-6">
+                <Card className="card-modern">
+                  <CardHeader>
+                    <CardTitle>Document Management</CardTitle>
+                    <CardDescription>
+                      Upload and manage your documents and files
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <DocumentUpload />
+                  </CardContent>
+                </Card>
+                
+                <Card className="card-modern">
+                  <CardHeader>
+                    <CardTitle>Your Documents</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <DocumentsList />
+                  </CardContent>
+                </Card>
+              </div>
+            )}
           </div>
         </div>
       </div>
