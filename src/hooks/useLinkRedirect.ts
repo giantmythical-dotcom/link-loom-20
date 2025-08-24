@@ -113,7 +113,7 @@ export function useLinkRedirect(username: string, linkIdentifier: string) {
         }
 
         // Find matching link by icon type or title
-        const matchingLink = linksData.find(link => 
+        const matchingLink = linksData.find(link =>
           link.icon.toLowerCase() === linkIdentifier.toLowerCase() ||
           link.title.toLowerCase().replace(/\s+/g, '-') === linkIdentifier.toLowerCase()
         );
@@ -125,8 +125,22 @@ export function useLinkRedirect(username: string, linkIdentifier: string) {
         }
 
         setRedirectUrl(matchingLink.url);
-        
-        // Perform the redirect after a short delay to allow for any analytics tracking
+
+        // Track the click analytics for social links
+        try {
+          await supabase
+            .from('link_clicks')
+            .insert({
+              link_id: matchingLink.id,
+              clicked_at: new Date().toISOString(),
+              user_agent: navigator.userAgent,
+              referrer: document.referrer || null
+            });
+        } catch (error) {
+          console.error('Failed to track redirect click:', error);
+        }
+
+        // Perform the redirect after tracking analytics
         setTimeout(() => {
           window.location.href = matchingLink.url;
         }, 100);
