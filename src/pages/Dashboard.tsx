@@ -38,7 +38,7 @@ const ICON_OPTIONS = [
   { value: 'linkedin', label: 'LinkedIn', icon: '💼' },
   { value: 'twitter', label: 'Twitter/X', icon: '🐦' },
   { value: 'instagram', label: 'Instagram', icon: '📷' },
-  { value: 'youtube', label: 'YouTube', icon: '����' },
+  { value: 'youtube', label: 'YouTube', icon: '📺' },
   { value: 'tiktok', label: 'TikTok', icon: '🎵' },
   { value: 'facebook', label: 'Facebook', icon: '👥' },
   { value: 'email', label: 'Email', icon: '📧' },
@@ -229,10 +229,25 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/20 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading your dashboard...</p>
+      <div className="min-h-screen bg-gradient-subtle p-4 relative overflow-hidden">
+        {/* Animated background elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-primary/3 rounded-full blur-3xl animate-float"></div>
+          <div className="absolute bottom-1/3 left-1/4 w-80 h-80 bg-primary-glow/3 rounded-full blur-3xl animate-float" style={{ animationDelay: '3s' }}></div>
+        </div>
+
+        <div className="max-w-6xl mx-auto relative z-10">
+          <DashboardHeaderSkeleton />
+
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+            <div className="xl:col-span-1">
+              <ProfileSkeleton />
+            </div>
+
+            <div className="lg:col-span-2">
+              <LinksSkeleton />
+            </div>
+          </div>
         </div>
       </div>
     );
