@@ -564,8 +564,10 @@ export default function Dashboard() {
                     <span className="text-sm font-medium">{socialLinks.filter(link => link.is_active).length}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-sm text-muted-foreground">Profile Views</span>
-                    <span className="text-sm font-medium">1,247</span>
+                    <span className="text-sm text-muted-foreground">Total Clicks</span>
+                    <span className="text-sm font-medium">
+                      {analyticsLoading ? '...' : analytics.totalClicks}
+                    </span>
                   </div>
                 </div>
               </CardContent>
