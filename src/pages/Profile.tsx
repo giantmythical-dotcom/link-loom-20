@@ -42,12 +42,25 @@ export default function Profile() {
       }
 
       try {
-        // Fetch profile - use public view for better security
+        console.log('🔍 Attempting to fetch profile for username:', username);
+
+        // First, let's try the regular profiles table to see if it exists
+        const { data: regularProfileData, error: regularError } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('username', username.toLowerCase())
+          .maybeSingle();
+
+        console.log('📋 Regular profiles table result:', { regularProfileData, regularError });
+
+        // Now try the public_profiles view
         const { data: profileData, error: profileError } = await supabase
           .from('public_profiles')
           .select('*')
           .eq('username', username.toLowerCase())
           .maybeSingle();
+
+        console.log('👀 Public profiles view result:', { profileData, profileError });
 
         if (profileError) {
           console.error('Error fetching profile:', profileError);
