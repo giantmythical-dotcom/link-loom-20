@@ -13,7 +13,7 @@ import { ExternalLink, Link as LinkIcon, Share2, Heart, Copy } from 'lucide-reac
 const ICON_OPTIONS = [
   { value: 'link', label: 'Link', icon: '🔗' },
   { value: 'github', label: 'GitHub', icon: '💻' },
-  { value: 'linkedin', label: 'LinkedIn', icon: '💼' },
+  { value: 'linkedin', label: 'LinkedIn', icon: '��' },
   { value: 'twitter', label: 'Twitter/X', icon: '🐦' },
   { value: 'instagram', label: 'Instagram', icon: '📷' },
   { value: 'youtube', label: 'YouTube', icon: '📺' },
@@ -105,11 +105,11 @@ export default function Profile() {
           const { data: { session } } = await supabase.auth.getSession();
 
           // Only track for anonymous users or if viewing someone else's profile
-          if (!session || session.user.id !== profileData.user_id) {
+          if (!session || session.user.id !== finalProfileData.user_id) {
             await supabase
               .from('profile_views')
               .insert({
-                profile_id: profileData.id,
+                profile_id: finalProfileData.id,
                 viewed_at: new Date().toISOString(),
                 user_agent: navigator.userAgent,
                 referrer: document.referrer || null
