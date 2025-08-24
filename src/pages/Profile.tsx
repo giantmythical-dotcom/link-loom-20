@@ -179,10 +179,41 @@ export default function Profile() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/20 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading profile...</p>
+      <div className="min-h-screen bg-gradient-subtle relative overflow-hidden">
+        {/* Animated background elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-1/4 right-1/4 w-80 h-80 bg-primary/5 rounded-full blur-3xl animate-float"></div>
+          <div className="absolute bottom-1/3 left-1/4 w-64 h-64 bg-primary-glow/5 rounded-full blur-3xl animate-float" style={{ animationDelay: '3s' }}></div>
+        </div>
+
+        <div className="absolute top-4 right-4 z-10">
+          <ThemeToggle />
+        </div>
+
+        <div className="container max-w-2xl mx-auto px-4 py-12 relative z-10">
+          <div className="text-center mb-12 animate-slide-up">
+            <Skeleton className="w-40 h-40 rounded-full mx-auto mb-8" />
+            <Skeleton className="h-12 w-64 mx-auto mb-4" />
+            <Skeleton className="h-6 w-32 mx-auto mb-2" />
+            <Skeleton className="h-4 w-80 mx-auto" />
+          </div>
+
+          <div className="space-y-6">
+            {[...Array(4)].map((_, i) => (
+              <Card key={i} className="glass border-0">
+                <CardContent className="p-8">
+                  <div className="flex items-center gap-6">
+                    <Skeleton className="w-16 h-16 rounded-2xl" />
+                    <div className="flex-1 space-y-2">
+                      <Skeleton className="h-6 w-3/4" />
+                      <Skeleton className="h-4 w-1/2" />
+                    </div>
+                    <Skeleton className="w-6 h-6" />
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </div>
       </div>
     );
