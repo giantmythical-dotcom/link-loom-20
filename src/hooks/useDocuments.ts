@@ -51,7 +51,7 @@ export const useDocuments = () => {
     }
   };
 
-  const uploadDocument = async (file: File, title: string): Promise<Document | null> => {
+  const uploadDocument = async (file: File, title: string, slug?: string): Promise<Document | null> => {
     if (!user) return null;
 
     try {
@@ -73,16 +73,23 @@ export const useDocuments = () => {
         .getPublicUrl(fileName);
 
       // Create document record
+      const documentData: any = {
+        user_id: user.id,
+        title,
+        filename: file.name,
+        file_path: fileName,
+        file_size: file.size,
+        mime_type: file.type,
+      };
+
+      // Add slug if provided
+      if (slug) {
+        documentData.slug = slug;
+      }
+
       const { data, error } = await supabase
         .from('documents')
-        .insert({
-          user_id: user.id,
-          title,
-          filename: file.name,
-          file_path: fileName,
-          file_size: file.size,
-          mime_type: file.type,
-        })
+        .insert(documentData)
         .select()
         .single();
 

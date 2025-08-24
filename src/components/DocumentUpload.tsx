@@ -9,6 +9,7 @@ import { useDocuments } from '@/hooks/useDocuments';
 export const DocumentUpload = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [title, setTitle] = useState('');
+  const [slug, setSlug] = useState('');
   const [uploading, setUploading] = useState(false);
   const { uploadDocument } = useDocuments();
 
@@ -17,7 +18,11 @@ export const DocumentUpload = () => {
     if (file && file.type === 'application/pdf') {
       setSelectedFile(file);
       if (!title) {
-        setTitle(file.name.replace('.pdf', ''));
+        const fileName = file.name.replace('.pdf', '');
+        setTitle(fileName);
+        // Auto-generate slug from filename
+        const autoSlug = fileName.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+        setSlug(autoSlug);
       }
     }
   };
@@ -27,9 +32,12 @@ export const DocumentUpload = () => {
 
     setUploading(true);
     try {
-      await uploadDocument(selectedFile, title.trim());
+      // Normalize the slug before upload
+      const normalizedSlug = slug.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      await uploadDocument(selectedFile, title.trim(), normalizedSlug || undefined);
       setSelectedFile(null);
       setTitle('');
+      setSlug('');
       // Reset file input
       const fileInput = document.getElementById('pdf-upload') as HTMLInputElement;
       if (fileInput) fileInput.value = '';
@@ -41,6 +49,7 @@ export const DocumentUpload = () => {
   const clearSelection = () => {
     setSelectedFile(null);
     setTitle('');
+    setSlug('');
     const fileInput = document.getElementById('pdf-upload') as HTMLInputElement;
     if (fileInput) fileInput.value = '';
   };
@@ -90,9 +99,33 @@ export const DocumentUpload = () => {
               <Input
                 id="document-title"
                 value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                onChange={(e) => {
+                  const newTitle = e.target.value;
+                  setTitle(newTitle);
+                  // Auto-update slug when title changes (only if slug is empty or matches previous auto-generated)
+                  const autoSlug = newTitle.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+                  if (!slug || slug === title.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')) {
+                    setSlug(autoSlug);
+                  }
+                }}
                 placeholder="Enter document title"
               />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="document-slug">Custom URL Slug (optional)</Label>
+              <Input
+                id="document-slug"
+                value={slug}
+                onChange={(e) => {
+                  const normalizedSlug = e.target.value.trim().toLowerCase().replace(/[^a-z0-9-]+/g, '-').replace(/^-|-$/g, '');
+                  setSlug(normalizedSlug);
+                }}
+                placeholder="my-document-name"
+              />
+              <p className="text-xs text-muted-foreground">
+                Creates a shareable URL like /username/{slug || 'document-name'}
+              </p>
             </div>
 
             <Button

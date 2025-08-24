@@ -51,19 +51,23 @@ export function useLinkRedirect(username: string, linkIdentifier: string) {
         if (docBySlug) {
           document = docBySlug;
         } else {
-          // If not found by slug, try by document ID
-          const { data: docById, error: idError } = await supabase
-            .from('documents')
-            .select('*')
-            .eq('id', linkIdentifier)
-            .eq('user_id', profileData.user_id)
-            .eq('is_active', true)
-            .eq('is_public', true)
-            .maybeSingle();
-            
-          if (idError && idError.code !== 'PGRST116') throw idError;
-          document = docById;
-          docError = idError;
+          // If not found by slug, try by document ID (only if linkIdentifier is a valid UUID)
+          const isValidUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(linkIdentifier);
+
+          if (isValidUUID) {
+            const { data: docById, error: idError } = await supabase
+              .from('documents')
+              .select('*')
+              .eq('id', linkIdentifier)
+              .eq('user_id', profileData.user_id)
+              .eq('is_active', true)
+              .eq('is_public', true)
+              .maybeSingle();
+
+            if (idError && idError.code !== 'PGRST116') throw idError;
+            document = docById;
+            docError = idError;
+          }
         }
           
         console.log('Document query result:', { document, docError });
@@ -83,7 +87,7 @@ export function useLinkRedirect(username: string, linkIdentifier: string) {
           // Delay redirect to see console logs
           setTimeout(() => {
             window.location.href = urlData.publicUrl;
-          }, 2000);
+          }, 1000);
           return;
         }
 
