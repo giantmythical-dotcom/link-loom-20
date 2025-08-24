@@ -96,8 +96,8 @@ export default function LinkRedirect() {
             
             {redirectUrl && (
               <div className="flex flex-col gap-3">
-                <Button 
-                  onClick={() => window.location.href = redirectUrl}
+                <Button
+                  onClick={() => window.open(redirectUrl, '_blank', 'noopener,noreferrer')}
                   variant="gradient"
                   className="flex items-center gap-2"
                 >
