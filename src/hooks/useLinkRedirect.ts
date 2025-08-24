@@ -129,7 +129,7 @@ export function useLinkRedirect(username: string, linkIdentifier: string) {
 
         setRedirectUrl(matchingLink.url);
 
-        // Track the click analytics for social links
+        // Track the click analytics for social links (best effort, don't block redirect)
         try {
           await supabase
             .from('link_clicks')
@@ -140,7 +140,8 @@ export function useLinkRedirect(username: string, linkIdentifier: string) {
               referrer: document.referrer || null
             });
         } catch (error) {
-          console.error('Failed to track redirect click:', error);
+          // Silently fail if analytics tracking is not available (e.g., for anonymous users with RLS)
+          console.log('Click tracking not available for this user:', error);
         }
 
         // Perform the redirect after tracking analytics
