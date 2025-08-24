@@ -42,47 +42,19 @@ export default function Profile() {
       }
 
       try {
-        console.log('🔍 Attempting to fetch profile for username:', username);
+        console.log('🔍 Fetching profile for username:', username);
 
-        // First, let's try the regular profiles table to see if it exists
-        const { data: regularProfileData, error: regularError } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('username', username.toLowerCase())
-          .maybeSingle();
-
-        console.log('📋 Regular profiles table result:', { regularProfileData, regularError });
-
-        // Now try the public_profiles view
+        // Use regular profiles table - it has proper RLS policy for public access
         const { data: profileData, error: profileError } = await supabase
-          .from('public_profiles')
-          .select('*')
+          .from('profiles')
+          .select('id, user_id, username, display_name, bio, avatar_url, created_at, updated_at')
           .eq('username', username.toLowerCase())
           .maybeSingle();
 
-        console.log('👀 Public profiles view result:', { profileData, profileError });
+        console.log('📋 Profile query result:', { profileData, profileError });
 
-        // If public_profiles view fails, fall back to regular profiles table
-        let finalProfileData = profileData;
-        let finalError = profileError;
-
-        if (profileError && !profileData) {
-          console.log('📋 Public profiles view failed, trying regular profiles table...');
-
-          // Fallback to regular profiles table
-          const { data: fallbackData, error: fallbackError } = await supabase
-            .from('profiles')
-            .select('id, user_id, username, display_name, bio, avatar_url, created_at, updated_at')
-            .eq('username', username.toLowerCase())
-            .maybeSingle();
-
-          console.log('🔄 Fallback profiles result:', { fallbackData, fallbackError });
-          finalProfileData = fallbackData;
-          finalError = fallbackError;
-        }
-
-        if (finalError) {
-          console.error('Error fetching profile:', finalError);
+        if (profileError) {
+          console.error('Error fetching profile:', profileError);
           setNotFound(true);
           setLoading(false);
           return;
