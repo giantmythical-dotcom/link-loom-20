@@ -3,10 +3,12 @@ import { useParams } from 'react-router-dom';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { Skeleton } from '@/components/ui/skeleton';
 import { supabase } from '@/integrations/supabase/client';
 import type { Profile, SocialLink } from '@/hooks/useProfile';
-import { ExternalLink, Link as LinkIcon } from 'lucide-react';
+import { ExternalLink, Link as LinkIcon, Share2, BarChart3, TrendingUp } from 'lucide-react';
 
 const ICON_OPTIONS = [
   { value: 'link', label: 'Link', icon: '🔗' },
