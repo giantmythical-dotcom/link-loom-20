@@ -98,7 +98,7 @@ export function useLinkRedirect(username: string, linkIdentifier: string) {
         // We'll match by icon type or title (case-insensitive)
         const { data: linksData, error: linksError } = await supabase
           .from('social_links')
-          .select('url, title, icon')
+          .select('id, url, title, icon')
           .eq('user_id', profileData.user_id)
           .eq('is_active', true);
 
