@@ -801,10 +801,12 @@ export default function Dashboard() {
                       <div className="flex items-center justify-between">
                         <div>
                           <p className="text-sm font-medium text-muted-foreground">Profile Views</p>
-                          <p className="text-3xl font-bold text-foreground">892</p>
-                          <p className="text-xs text-accent-emerald flex items-center gap-1 mt-1">
-                            <TrendingUp className="w-3 h-3" />
-                            +8% from last week
+                          <p className="text-3xl font-bold text-foreground">
+                            {analyticsLoading ? '...' : analytics.profileViews.toLocaleString()}
+                          </p>
+                          <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
+                            <Eye className="w-3 h-3" />
+                            Estimated
                           </p>
                         </div>
                         <div className="w-12 h-12 bg-accent-emerald/10 rounded-2xl flex items-center justify-center">
