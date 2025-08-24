@@ -13,7 +13,7 @@ import { ExternalLink, Link as LinkIcon, Share2, Heart, Copy } from 'lucide-reac
 const ICON_OPTIONS = [
   { value: 'link', label: 'Link', icon: '🔗' },
   { value: 'github', label: 'GitHub', icon: '💻' },
-  { value: 'linkedin', label: 'LinkedIn', icon: '��' },
+  { value: 'linkedin', label: 'LinkedIn', icon: '💼' },
   { value: 'twitter', label: 'Twitter/X', icon: '🐦' },
   { value: 'instagram', label: 'Instagram', icon: '📷' },
   { value: 'youtube', label: 'YouTube', icon: '📺' },
@@ -124,9 +124,11 @@ export default function Profile() {
         const { data: linksData, error: linksError } = await supabase
           .from('social_links')
           .select('*')
-          .eq('user_id', profileData.user_id)
+          .eq('user_id', finalProfileData.user_id)
           .eq('is_active', true)
           .order('position');
+
+        console.log('🔗 Social links result:', { linksData, linksError });
 
         if (linksError) {
           console.error('Error fetching links:', linksError);
