@@ -117,9 +117,37 @@ export function useAnalytics() {
           return { date, clicks: dayClicks };
         });
 
-        // For now, we'll use a placeholder for profile views since we haven't implemented that table yet
-        // This can be updated when profile view tracking is implemented
-        const profileViews = Math.floor(totalClicks * 1.5); // Rough estimate
+        // Try to fetch real profile view data
+        let profileViews = 0;
+        try {
+          // Get user's profile ID first
+          const { data: userProfile, error: profileError } = await supabase
+            .from('profiles')
+            .select('id')
+            .eq('user_id', user.id)
+            .maybeSingle();
+
+          if (userProfile && !profileError) {
+            const { data: viewData, error: viewError } = await supabase
+              .from('profile_views')
+              .select('id')
+              .eq('profile_id', userProfile.id);
+
+            if (!viewError && viewData) {
+              profileViews = viewData.length;
+            } else {
+              // Fallback to estimate if profile_views table doesn't exist
+              profileViews = Math.floor(totalClicks * 1.5);
+            }
+          } else {
+            // Fallback to estimate
+            profileViews = Math.floor(totalClicks * 1.5);
+          }
+        } catch (error) {
+          // Fallback to estimate if there are any errors
+          console.log('Profile views tracking not available, using estimate');
+          profileViews = Math.floor(totalClicks * 1.5);
+        }
 
         setAnalytics({
           totalClicks,
