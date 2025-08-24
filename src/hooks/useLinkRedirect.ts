@@ -80,10 +80,13 @@ export function useLinkRedirect(username: string, linkIdentifier: string) {
           const { data: urlData } = supabase.storage
             .from('documents')
             .getPublicUrl(document.file_path);
-          
+
           console.log('Document URL:', urlData.publicUrl);
           setRedirectUrl(urlData.publicUrl);
-          
+
+          // Track document access (we can create a document_views table later, for now we'll skip this)
+          // TODO: Implement document access tracking when document_views table is created
+
           // Delay redirect to see console logs
           setTimeout(() => {
             window.location.href = urlData.publicUrl;
