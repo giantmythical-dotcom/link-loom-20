@@ -434,8 +434,8 @@ export default function Dashboard() {
 
                 <Dialog open={isEditingProfile} onOpenChange={setIsEditingProfile}>
                   <DialogTrigger asChild>
-                    <Button variant="outline" className="w-full">
-                      <Edit className="w-4 h-4 mr-2" />
+                    <Button variant="outline" className="w-full hover:scale-105 transition-all duration-300 group">
+                      <Edit className="w-4 h-4 mr-2 group-hover:rotate-12 transition-transform" />
                       Edit Profile
                     </Button>
                   </DialogTrigger>
