@@ -77,11 +77,11 @@ export default function Profile() {
           const { data: { session } } = await supabase.auth.getSession();
 
           // Only track for anonymous users or if viewing someone else's profile
-          if (!session || session.user.id !== finalProfileData.user_id) {
+          if (!session || session.user.id !== profileData.user_id) {
             await supabase
               .from('profile_views')
               .insert({
-                profile_id: finalProfileData.id,
+                profile_id: profileData.id,
                 viewed_at: new Date().toISOString(),
                 user_agent: navigator.userAgent,
                 referrer: document.referrer || null
