@@ -18,19 +18,39 @@ export function useLinkRedirect(username: string, linkIdentifier: string) {
         // First check if it's a document ID
         console.log('Checking for document with ID:', linkIdentifier, 'for user:', username);
         
+        console.log('🔍 LinkRedirect: Fetching profile for username:', username);
+
         // Get user_id first from public profiles view
-        const { data: profileData, error: profileError } = await supabase
+        let { data: profileData, error: profileError } = await supabase
           .from('public_profiles')
           .select('user_id')
           .eq('username', username)
           .maybeSingle();
 
+        console.log('👀 LinkRedirect: Public profiles result:', { profileData, profileError });
+
+        // Fallback to regular profiles table if view fails
+        if (profileError && !profileData) {
+          console.log('📋 LinkRedirect: Trying regular profiles table...');
+          const { data: fallbackData, error: fallbackError } = await supabase
+            .from('profiles')
+            .select('user_id')
+            .eq('username', username)
+            .maybeSingle();
+
+          console.log('🔄 LinkRedirect: Fallback result:', { fallbackData, fallbackError });
+          profileData = fallbackData;
+          profileError = fallbackError;
+        }
+
         if (profileError || !profileData) {
-          console.log('Profile not found for username:', username);
+          console.log('❌ LinkRedirect: Profile not found for username:', username);
           setNotFound(true);
           setLoading(false);
           return;
         }
+
+        console.log('✅ LinkRedirect: Profile found:', profileData);
 
         // Now check for document with this user_id (first by slug, then by ID)
         let document = null;
