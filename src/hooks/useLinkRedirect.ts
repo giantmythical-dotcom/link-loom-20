@@ -15,7 +15,34 @@ export function useLinkRedirect(username: string, linkIdentifier: string) {
       }
 
       try {
-        // First, get the user profile to get user_id
+        // First check if it's a document ID
+        const { data: document, error: docError } = await supabase
+          .from('documents')
+          .select(`
+            *,
+            profiles!inner(username)
+          `)
+          .eq('id', linkIdentifier)
+          .eq('is_active', true)
+          .eq('profiles.username', username)
+          .maybeSingle();
+
+        if (docError && docError.code !== 'PGRST116') throw docError;
+
+        if (document) {
+          // Redirect to the actual PDF file
+          const { data: urlData } = supabase.storage
+            .from('documents')
+            .getPublicUrl(document.file_path);
+          
+          setRedirectUrl(urlData.publicUrl);
+          setTimeout(() => {
+            window.location.href = urlData.publicUrl;
+          }, 100);
+          return;
+        }
+
+        // If not a document, get the user profile to get user_id for social links
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
           .select('user_id')

@@ -8,6 +8,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { DocumentUpload } from '@/components/DocumentUpload';
+import { DocumentsList } from '@/components/DocumentsList';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { toast } from '@/hooks/use-toast';
@@ -564,9 +566,17 @@ export default function Dashboard() {
                 )}
               </CardContent>
             </Card>
+
+            {/* Documents Section */}
+            <div className="mt-8 space-y-6 animate-slide-up">
+              <h2 className="text-2xl font-bold gradient-text">Documents</h2>
+              <div className="space-y-6">
+                <DocumentUpload />
+                <DocumentsList />
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  );
+    );
 }
