@@ -21,6 +21,7 @@ All colors MUST be HSL.
     --primary-foreground: 0 0% 98%;
     --primary-light: 215 25% 27%;
     --primary-lighter: 215 20% 65%;
+    --primary-glow: 215 28% 35%;
     --accent-blue: 215 84% 56%;
     --accent-emerald: 158 64% 52%;
     --accent-orange: 25 95% 53%;
@@ -114,6 +115,7 @@ All colors MUST be HSL.
     --primary-foreground: 220 15% 8%;
     --primary-light: 220 8% 85%;
     --primary-lighter: 220 8% 70%;
+    --primary-glow: 220 8% 75%;
     --accent-blue: 215 89% 61%;
     --accent-emerald: 158 69% 57%;
     --accent-orange: 25 95% 58%;
@@ -397,6 +399,11 @@ All colors MUST be HSL.
   .btn-modern:active {
     transform: translateY(0);
     box-shadow: var(--shadow-sm);
+  }
+
+  .btn-glow {
+    box-shadow: 0 6px 30px -10px hsl(var(--primary-glow) / 0.35);
+    transition: box-shadow 0.2s var(--ease-out), transform 0.2s var(--ease-out);
   }
 
   /* Subtle Animations */
