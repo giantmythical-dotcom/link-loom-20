@@ -18,9 +18,9 @@ export function useLinkRedirect(username: string, linkIdentifier: string) {
         // First check if it's a document ID
         console.log('Checking for document with ID:', linkIdentifier, 'for user:', username);
         
-        // Get user_id first from profiles table
+        // Get user_id first from public profiles view
         const { data: profileData, error: profileError } = await supabase
-          .from('profiles')
+          .from('public_profiles')
           .select('user_id')
           .eq('username', username)
           .maybeSingle();
