@@ -292,10 +292,10 @@ const Index = () => {
               <p className="text-muted-foreground text-xl mb-8 leading-relaxed">
                 Join thousands of creators, influencers, and professionals who trust LinkHub to showcase their online presence.
               </p>
-              <Button 
-                size="lg" 
-                variant="gradient"
-                className="text-xl px-12 py-5 btn-glow hover:scale-105 transition-all duration-300 group-hover:animate-pulse-glow"
+              <Button
+                size="xl"
+                variant="shimmer"
+                className="text-xl px-12 py-5"
                 onClick={() => navigate('/auth')}
               >
                 Create Your LinkHub
