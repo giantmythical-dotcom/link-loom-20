@@ -10,20 +10,23 @@ import { Badge } from '@/components/ui/badge';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { DocumentUpload } from '@/components/DocumentUpload';
 import { DocumentsList } from '@/components/DocumentsList';
+import { ProfileSkeleton, LinksSkeleton, DashboardHeaderSkeleton } from '@/components/DashboardSkeleton';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { toast } from '@/hooks/use-toast';
-import { 
-  LogOut, 
-  User, 
-  Link as LinkIcon, 
-  Plus, 
-  ExternalLink, 
-  Edit, 
-  Trash2, 
+import {
+  LogOut,
+  User,
+  Link as LinkIcon,
+  Plus,
+  ExternalLink,
+  Edit,
+  Trash2,
   Upload,
   Eye,
-  GripVertical
+  GripVertical,
+  BarChart3,
+  Copy
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -35,7 +38,7 @@ const ICON_OPTIONS = [
   { value: 'linkedin', label: 'LinkedIn', icon: '💼' },
   { value: 'twitter', label: 'Twitter/X', icon: '🐦' },
   { value: 'instagram', label: 'Instagram', icon: '📷' },
-  { value: 'youtube', label: 'YouTube', icon: '📺' },
+  { value: 'youtube', label: 'YouTube', icon: '����' },
   { value: 'tiktok', label: 'TikTok', icon: '🎵' },
   { value: 'facebook', label: 'Facebook', icon: '👥' },
   { value: 'email', label: 'Email', icon: '📧' },
