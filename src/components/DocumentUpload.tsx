@@ -28,13 +28,13 @@ export const DocumentUpload = () => {
   };
 
   const handleUpload = async () => {
-    if (!selectedFile || !title.trim()) return;
+    if (!selectedFile || !title.trim() || !slug.trim()) return;
 
     setUploading(true);
     try {
       // Normalize the slug before upload
       const normalizedSlug = slug.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-      await uploadDocument(selectedFile, title.trim(), normalizedSlug || undefined);
+      await uploadDocument(selectedFile, title.trim(), normalizedSlug);
       setSelectedFile(null);
       setTitle('');
       setSlug('');
