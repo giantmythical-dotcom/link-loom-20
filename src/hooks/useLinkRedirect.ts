@@ -18,16 +18,28 @@ export function useLinkRedirect(username: string, linkIdentifier: string) {
         // First check if it's a document ID
         console.log('Checking for document with ID:', linkIdentifier, 'for user:', username);
         
+        // Get user_id first from profiles table
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('user_id')
+          .eq('username', username)
+          .maybeSingle();
+
+        if (profileError || !profileData) {
+          console.log('Profile not found for username:', username);
+          setNotFound(true);
+          setLoading(false);
+          return;
+        }
+
+        // Now check for document with this user_id
         const { data: document, error: docError } = await supabase
           .from('documents')
-          .select(`
-            *,
-            profiles!inner(username)
-          `)
+          .select('*')
           .eq('id', linkIdentifier)
+          .eq('user_id', profileData.user_id)
           .eq('is_active', true)
           .eq('is_public', true)
-          .eq('profiles.username', username)
           .maybeSingle();
           
         console.log('Document query result:', { document, docError });
@@ -51,21 +63,7 @@ export function useLinkRedirect(username: string, linkIdentifier: string) {
           return;
         }
 
-        // If not a document, get the user profile to get user_id for social links
-        const { data: profileData, error: profileError } = await supabase
-          .from('profiles')
-          .select('user_id')
-          .eq('username', username.toLowerCase())
-          .maybeSingle();
-
-        if (profileError || !profileData) {
-          console.error('Profile not found:', profileError);
-          setNotFound(true);
-          setLoading(false);
-          return;
-        }
-
-        // Then, find the specific social link
+        // If not a document, find the specific social link
         // We'll match by icon type or title (case-insensitive)
         const { data: linksData, error: linksError } = await supabase
           .from('social_links')
