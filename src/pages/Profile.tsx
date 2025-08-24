@@ -147,7 +147,7 @@ export default function Profile() {
     // Add visual feedback
     setClickedLinks(prev => new Set(prev).add(linkId));
     
-    // Track click analytics in the database
+    // Track click analytics in the database (best effort, don't block link opening)
     try {
       await supabase
         .from('link_clicks')
@@ -158,7 +158,8 @@ export default function Profile() {
           referrer: document.referrer || null
         });
     } catch (error) {
-      console.error('Failed to track click:', error);
+      // Silently fail if analytics tracking is not available (e.g., for anonymous users with RLS)
+      console.log('Click tracking not available for this user:', error);
     }
     
     // Open the link
