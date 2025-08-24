@@ -51,12 +51,6 @@ export default function Profile() {
 
         if (profileError) {
           console.error('Error fetching profile:', profileError);
-          console.error('Profile error details:', {
-            message: profileError.message,
-            code: profileError.code,
-            details: profileError.details,
-            hint: profileError.hint
-          });
           setNotFound(true);
           setLoading(false);
           return;
