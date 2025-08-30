@@ -6,9 +6,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Skeleton } from '@/components/ui/skeleton';
-import { supabase } from '@/integrations/supabase/client';
 import type { Profile, SocialLink } from '@/hooks/useProfile';
-import { ExternalLink, Link as LinkIcon, Share2, Heart, Copy } from 'lucide-react';
+import { ExternalLink, Link as LinkIcon, Share2 } from 'lucide-react';
 
 const ICON_OPTIONS = [
   { value: 'link', label: 'Link', icon: '🔗' },
@@ -25,7 +24,7 @@ const ICON_OPTIONS = [
   { value: 'resume', label: 'Resume', icon: '📄' },
 ];
 
-export default function Profile() {
+export default function ProfileView() {
   const { username } = useParams<{ username: string }>();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
@@ -44,71 +43,22 @@ export default function Profile() {
       try {
         console.log('🔍 Fetching profile for username:', username);
 
-        // Use regular profiles table - it has proper RLS policy for public access
-        const { data: profileData, error: profileError } = await supabase
-          .from('profiles')
-          .select('id, user_id, username, display_name, bio, avatar_url, created_at, updated_at')
-          .eq('username', username.toLowerCase())
-          .maybeSingle();
+        // TODO: Replace with API call to your backend
+        // For now, simulate not found since we don't have the backend API for public profiles yet
+        setNotFound(true);
+        setLoading(false);
+        return;
 
-        console.log('📋 Profile query result:', { profileData, profileError });
-
-        if (profileError) {
-          console.error('Error fetching profile:', profileError);
-          setNotFound(true);
-          setLoading(false);
-          return;
-        }
-
-        if (!profileData) {
-          console.log('❌ No profile found for username:', username);
-          setNotFound(true);
-          setLoading(false);
-          return;
-        }
-
-        console.log('✅ Profile found:', profileData);
-        setProfile(profileData);
-
-        // Track profile view (only for anonymous users - authenticated users are tracked elsewhere)
-        // This helps avoid double-counting when profile owners view their own profile
-        try {
-          // Check if we have an authenticated session
-          const { data: { session } } = await supabase.auth.getSession();
-
-          // Only track for anonymous users or if viewing someone else's profile
-          if (!session || session.user.id !== profileData.user_id) {
-            await supabase
-              .from('profile_views')
-              .insert({
-                profile_id: profileData.id,
-                viewed_at: new Date().toISOString(),
-                user_agent: navigator.userAgent,
-                referrer: document.referrer || null
-              });
-          }
-        } catch (error) {
-          // Silently fail if profile_views table doesn't exist or RLS prevents access
-          console.log('Profile view tracking not available:', error);
-        }
-
-        // Fetch social links
-        const { data: linksData, error: linksError } = await supabase
-          .from('social_links')
-          .select('*')
-          .eq('user_id', finalProfileData.user_id)
-          .eq('is_active', true)
-          .order('position');
-
-        console.log('🔗 Social links result:', { linksData, linksError });
-
-        if (linksError) {
-          console.error('Error fetching links:', linksError);
-          // Don't fail the entire profile if social links can't be fetched
-          setSocialLinks([]);
-        } else {
-          setSocialLinks(linksData || []);
-        }
+        // When you implement the public profile API endpoint, use this pattern:
+        // const response = await fetch(`/api/v1/profile/public/${username}`);
+        // const data = await response.json();
+        // 
+        // if (response.ok && data.profile) {
+        //   setProfile(data.profile);
+        //   setSocialLinks(data.socialLinks || []);
+        // } else {
+        //   setNotFound(true);
+        // }
       } catch (error) {
         console.error('Error fetching profile:', error);
         setNotFound(true);
@@ -123,32 +73,32 @@ export default function Profile() {
   // Set document title and meta tags
   useEffect(() => {
     if (profile) {
-      document.title = `${profile.display_name || profile.username} | LinkHub`;
+      document.title = `${profile.displayName || profile.username} | LinkHub`;
       
       // Update meta description
       const metaDescription = document.querySelector('meta[name="description"]');
       if (metaDescription) {
         metaDescription.setAttribute('content', 
-          profile.bio || `Check out ${profile.display_name || profile.username}'s links on LinkHub`
+          profile.bio || `Check out ${profile.displayName || profile.username}'s links on LinkHub`
         );
       }
 
       // Update Open Graph tags
       const ogTitle = document.querySelector('meta[property="og:title"]');
       if (ogTitle) {
-        ogTitle.setAttribute('content', `${profile.display_name || profile.username} | LinkHub`);
+        ogTitle.setAttribute('content', `${profile.displayName || profile.username} | LinkHub`);
       }
 
       const ogDescription = document.querySelector('meta[property="og:description"]');
       if (ogDescription) {
         ogDescription.setAttribute('content', 
-          profile.bio || `Check out ${profile.display_name || profile.username}'s links on LinkHub`
+          profile.bio || `Check out ${profile.displayName || profile.username}'s links on LinkHub`
         );
       }
 
       const ogImage = document.querySelector('meta[property="og:image"]');
-      if (ogImage && profile.avatar_url) {
-        ogImage.setAttribute('content', profile.avatar_url);
+      if (ogImage && profile.avatarUrl) {
+        ogImage.setAttribute('content', profile.avatarUrl);
       }
     }
   }, [profile]);
@@ -157,20 +107,20 @@ export default function Profile() {
     // Add visual feedback
     setClickedLinks(prev => new Set(prev).add(linkId));
     
-    // Track click analytics in the database (best effort, don't block link opening)
-    try {
-      await supabase
-        .from('link_clicks')
-        .insert({
-          link_id: linkId,
-          clicked_at: new Date().toISOString(),
-          user_agent: navigator.userAgent,
-          referrer: document.referrer || null
-        });
-    } catch (error) {
-      // Silently fail if analytics tracking is not available (e.g., for anonymous users with RLS)
-      console.log('Click tracking not available for this user:', error);
-    }
+    // TODO: Track click analytics in your backend
+    // try {
+    //   await fetch('/api/v1/analytics/link-click', {
+    //     method: 'POST',
+    //     headers: { 'Content-Type': 'application/json' },
+    //     body: JSON.stringify({
+    //       linkId,
+    //       userAgent: navigator.userAgent,
+    //       referrer: document.referrer || null
+    //     })
+    //   });
+    // } catch (error) {
+    //   console.log('Click tracking failed:', error);
+    // }
     
     // Open the link
     window.open(url, '_blank', 'noopener,noreferrer');
@@ -191,8 +141,8 @@ export default function Profile() {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: `${profile?.display_name || profile?.username}'s LinkHub`,
-          text: profile?.bio || `Check out ${profile?.display_name || profile?.username}'s links`,
+          title: `${profile?.displayName || profile?.username}'s LinkHub`,
+          text: profile?.bio || `Check out ${profile?.displayName || profile?.username}'s links`,
           url: profileUrl,
         });
       } catch (error) {
@@ -308,9 +258,9 @@ export default function Profile() {
           <div className="text-center space-y-6">
             <div className="relative inline-block">
               <Avatar className="w-32 h-32 border-4 border-accent-blue/20 shadow-lg">
-                <AvatarImage src={profile.avatar_url || ''} />
+                <AvatarImage src={profile.avatarUrl || ''} />
                 <AvatarFallback className="text-4xl bg-gradient-accent text-white">
-                  {profile.display_name?.[0]?.toUpperCase() || profile.username[0]?.toUpperCase()}
+                  {profile.displayName?.[0]?.toUpperCase() || profile.username[0]?.toUpperCase()}
                 </AvatarFallback>
               </Avatar>
               
@@ -322,7 +272,7 @@ export default function Profile() {
             <div className="space-y-4">
               <div className="space-y-2">
                 <h1 className="text-4xl font-bold text-foreground">
-                  {profile.display_name || profile.username}
+                  {profile.displayName || profile.username}
                 </h1>
                 
                 <Badge variant="secondary" className="text-base px-4 py-1">
