@@ -85,7 +85,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (profile) {
-      setDisplayName(profile.displayName || '');
+      setDisplayName(profile.display_name || '');
       setBio(profile.bio || '');
     }
   }, [profile]);
@@ -128,7 +128,7 @@ export default function Dashboard() {
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     const { error } = await updateProfile({
-      displayName: displayName.trim(),
+      display_name: displayName.trim(),
       bio: bio.trim(),
     });
     
@@ -163,7 +163,7 @@ export default function Dashboard() {
       url: linkUrl.trim(),
       icon: linkIcon,
       position: socialLinks.length,
-      isActive: true,
+      is_active: true,
     });
     
     if (error) {
@@ -229,7 +229,7 @@ export default function Dashboard() {
   };
 
   const handleToggleLink = async (id: string, isActive: boolean) => {
-    const { error } = await updateSocialLink(id, { isActive: isActive });
+    const { error } = await updateSocialLink(id, { is_active: isActive });
     if (error) {
       toast({
         title: "Error",
@@ -454,9 +454,9 @@ export default function Dashboard() {
                 <div className="text-center space-y-4">
                   <div className="relative inline-block">
                     <Avatar className="w-24 h-24 border-4 border-accent-blue/20">
-                      <AvatarImage src={profile.avatarUrl || ''} />
+                      <AvatarImage src={profile.avatar_url || ''} />
                       <AvatarFallback className="text-2xl bg-gradient-accent text-white">
-                        {profile.displayName?.[0]?.toUpperCase() || profile.username[0]?.toUpperCase()}
+                        {profile.display_name?.[0]?.toUpperCase() || profile.username[0]?.toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
                     <label htmlFor="avatar-upload" className="absolute -bottom-1 -right-1 cursor-pointer">
@@ -475,7 +475,7 @@ export default function Dashboard() {
                   
                   <div className="space-y-2">
                     <h3 className="text-lg font-semibold text-foreground">
-                      {profile.displayName || profile.username}
+                      {profile.display_name || profile.username}
                     </h3>
                     <Badge variant="secondary" className="text-xs">
                       @{profile.username}
@@ -561,7 +561,7 @@ export default function Dashboard() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-sm text-muted-foreground">Active Links</span>
-                    <span className="text-sm font-medium">{socialLinks.filter(link => link.isActive).length}</span>
+                    <span className="text-sm font-medium">{socialLinks.filter(link => link.is_active).length}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-sm text-muted-foreground">Total Clicks</span>
@@ -737,7 +737,7 @@ export default function Dashboard() {
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2">
                               <h4 className="font-medium truncate">{link.title}</h4>
-                              {!link.isActive && (
+                              {!link.is_active && (
                                 <Badge variant="secondary" className="text-xs">Hidden</Badge>
                               )}
                             </div>
@@ -746,7 +746,7 @@ export default function Dashboard() {
                           
                           <div className="flex items-center gap-2">
                             <Switch
-                              checked={link.isActive}
+                              checked={link.is_active}
                               onCheckedChange={(checked) => handleToggleLink(link.id, checked)}
                             />
                             <Button
